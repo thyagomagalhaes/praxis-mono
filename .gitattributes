@@ -1,0 +1,5 @@
+/mvnw text eol=lf
+*.cmd text eol=crlf
+infra-prem/etl_msterritorializacao/*.sql filter=lfs diff=lfs merge=lfs -text
+src/main/resources/db/etlpipeline/territorializacao/afterMigrate__V003_popula_tabela_municipio.sql filter=lfs diff=lfs merge=lfs -text
+src/main/resources/db/etlpipeline/territorializacao/afterMigrate__V004_popula_tabela_bairro.sql filter=lfs diff=lfs merge=lfs -text
