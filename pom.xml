@@ -141,11 +141,7 @@
     		<scope>compile</scope>
 		</dependency>
 		
-		 <!-- Jackson - JSON --> 
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
+	
         
         <!--   OpenHtmlToPdf 
          https://github.com/danfickle/openhtmltopdf 
