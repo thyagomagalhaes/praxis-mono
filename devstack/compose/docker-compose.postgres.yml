@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PW}
+      - POSTGRES_DB=${POSTGRES_DB} #optional (specify default database instead of $POSTGRES_DB)
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      postgres_data:
+    
+    networks:
+      - praxis-network
+      
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    ports:
+      - "5050:5050"
+    restart: unless-stopped
+    
+    networks:
+      - praxis-network
+
+networks:
+  praxis-network:
+    name: praxis-network
