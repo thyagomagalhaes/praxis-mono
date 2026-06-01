@@ -1,0 +1,31 @@
+services:
+  nginx:
+    image: 'jc21/nginx-proxy-manager:2.15.0'
+    container_name: nginx-manager
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - "80:80" # Public HTTP Port
+      - "443:443" # Public HTTPS Port
+      - "81:81" # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - "21:21" # FTP
+    volumes:
+      nginx_manager_data:
+    
+    depends_on:
+      - postgres  
+
+    environment:
+      TZ: "Australia/Brisbane"
+    
+    networks:
+      - praxis-network
+
+networks:
+  praxis-network:
+    name: praxis-network
+
+
+
+
