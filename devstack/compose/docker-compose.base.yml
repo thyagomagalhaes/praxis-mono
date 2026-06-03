@@ -4,5 +4,6 @@ networks:
 
 volumes:
   postgres_data:
+  pgadmin_data:
   nginx_manager_data:
   
