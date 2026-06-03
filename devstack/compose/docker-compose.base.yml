@@ -1,0 +1,8 @@
+networks:
+  praxis-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  nginx_manager_data:
+  
