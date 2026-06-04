@@ -8,13 +8,13 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      postgres_data: /data/postgres
+    volumes:	   
+      - ${POSTGRES_DATA}:${POSTGRES_PATH}
     ports:
       # Mapeia a porta do seu computador para a porta de dentro do Docker
       - "${POSTGRES_PORT_HOST}:${POSTGRES_PORT_CONTAINER}"
     networks: 
-      praxis-network
+      - praxis-network
     restart: unless-stopped
       
   pgadmin:
@@ -27,7 +27,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      pgadmin_data: /var/lib/pgadmin
+      - ${PGADMIN_DATA}:${PGADMIN_PATH}
     depends_on:
       - postgres    
     ports:
@@ -42,5 +42,5 @@ networks:
     driver: bridge
 
 volumes:
-    postgres_data:
-    pgadmin_data:    
+    postgres_data: {POSTGRES_DATA}
+    pgadmin_data: {PGADMIN_DATA}

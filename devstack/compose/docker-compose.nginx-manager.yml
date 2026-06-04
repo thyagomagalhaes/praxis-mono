@@ -12,23 +12,26 @@ services:
       - "${NGINX_WEBADMIN_PORT_HOST}:${NGINX_WEBADMIN_PORT_CONTAINER}" # Admin Web Port
       # Add any other Stream port you want to expose
       # - "21:21" # FTP
-    volumes:
-      - ./data:/data                # Armazena as configurações dos seus proxies
-      - ./letsencrypt:/etc/letsencrypt # Armazena os certificados SSL
     
     depends_on:
       - postgres  
     environment:
       TZ: "America/Sao Paulo"
-    
-    networks:
-      - praxis-network
-
+	volumes: 
+	  - ${NGINX_PROXIES_DATA}:${NGINX_PROXIES_PATH} # Armazena as configurações dos seus proxies  
+	  - ${NGINX_CERTS_DATA}:${NGINX_CERTS_PATH} # Armazena os certificados SSL 
+	networks:
+	  - praxis-network
+	  
 networks:
   praxis-network:
     name: praxis-network
     driver: bridge
 volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+    nginx_proxy_data: {NGINX_PROXIES_DATA}
+    nginx_ssl_data: {NGINX_CERTS_DATA}
+	  # Armazena as configurações dos seus proxies
+      # - ./data:/data
+	  # Armazena os certificados SSL
+      # - ./letsencrypt:/etc/letsencrypt
 
