@@ -34,7 +34,8 @@
 | Bean Validation with Hibernate Validator | 9.0.1 | Validação | 
 | Flyway | 10.10.0 | Versionamento de banco de dados ( migrações e callbacks ) |
 | HikariCP | 7.0.2  | Pool de conexões |
-| Postgres | 47.7.10 | Banco de dados |
+| PostgreSQL JDBC Driver | 47.7.10 | Java JDBC driver for PostgreSQL database |
+| Spring Docker Compose | 4.0.6 | Suporte para orquestração local |
 | Apache Commons BeanUtils | 1.11.0 |  |
 | Jackson JSON |  |  |
 
