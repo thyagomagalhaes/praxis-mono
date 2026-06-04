@@ -117,6 +117,14 @@
 			<scope>runtime</scope>
 		</dependency>
 		
+		<!-- Spring Docker Compose-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-docker-compose</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		
 		<!-- DevTools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -150,7 +158,8 @@
 			<artifactId>openhtmltopdf-pdfbox</artifactId>
 			<version>1.0.10</version>
 		</dependency>-->
-	
+	    
+	    
 	</dependencies>
 	
 	<dependencyManagement>
