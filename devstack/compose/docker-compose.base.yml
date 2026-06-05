@@ -1,10 +1,9 @@
 networks:
-  praxis-network:
-    driver: bridge
+    praxis-network:
+        driver: bridge
 
 volumes:
-  postgres_data:
-  pgadmin_data:
-  nginx_proxy_data:
-  nginx_ssl_data:
-  
+    postgres_data:
+    pgadmin_data:
+    nginx_proxy_data:
+    nginx_ssl_data:
