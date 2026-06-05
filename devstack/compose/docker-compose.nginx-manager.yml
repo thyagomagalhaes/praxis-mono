@@ -17,12 +17,12 @@ services:
       - postgres  
     environment:
       TZ: "America/Sao Paulo"
-	volumes: 
-	  - ${NGINX_PROXIES_DATA}:${NGINX_PROXIES_PATH} # Armazena as configurações dos seus proxies  
-	  - ${NGINX_CERTS_DATA}:${NGINX_CERTS_PATH} # Armazena os certificados SSL 
-	networks:
-	  - praxis-network
-	  
+    volumes: 
+      - ${NGINX_PROXIES_DATA}:${NGINX_PROXIES_PATH} # Armazena as configurações dos seus proxies  
+      - ${NGINX_CERTS_DATA}:${NGINX_CERTS_PATH} # Armazena os certificados SSL 
+    networks:
+      - praxis-network
+
 networks:
   praxis-network:
     name: praxis-network
@@ -30,8 +30,8 @@ networks:
 volumes:
     nginx_proxy_data: {NGINX_PROXIES_DATA}
     nginx_ssl_data: {NGINX_CERTS_DATA}
-	  # Armazena as configurações dos seus proxies
-      # - ./data:/data
-	  # Armazena os certificados SSL
-      # - ./letsencrypt:/etc/letsencrypt
+    # Armazena as configurações dos seus proxies
+    # - ./data:/data
+    # Armazena os certificados SSL
+    # - ./letsencrypt:/etc/letsencrypt
 
