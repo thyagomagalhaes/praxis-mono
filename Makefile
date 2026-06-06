@@ -6,6 +6,9 @@ POSTGRES_CONTAINER ?= postgres
 POSTGRES_PORT ?= 5432
 NGINX_MANAGER_CONTAINER ?= nginx-manager
 NGINX_MANAGER_PORT ?= 80
+PORTAINER_CONTAINER ?= portainer
+PORTAINER_PORT ?= 9443
+
 
 
 # carrega configurações de rede e volumes

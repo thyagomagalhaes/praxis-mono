@@ -2,8 +2,7 @@ services:
   nginx-manager:
     image: 'jc21/nginx-proxy-manager:2.15.0'
     container_name: nginx-manager
-    env_file:
-      - .env
+    env_file: .env
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
@@ -18,8 +17,8 @@ services:
     environment:
       TZ: "America/Sao Paulo"
     volumes: 
-      - ${NGINX_PROXIES_DATA}:${NGINX_PROXIES_PATH} # Armazena as configurações dos seus proxies  
-      - ${NGINX_CERTS_DATA}:${NGINX_CERTS_PATH} # Armazena os certificados SSL 
+      - nginx_proxy_data:/data # Armazena as configurações dos seus proxies  
+      - nginx_ssl_data:/etc/letsencrypt # Armazena os certificados SSL 
     networks:
       - praxis-network
 
@@ -28,8 +27,8 @@ networks:
     name: praxis-network
     driver: bridge
 volumes:
-    nginx_proxy_data: {NGINX_PROXIES_DATA}
-    nginx_ssl_data: {NGINX_CERTS_DATA}
+    nginx_proxy_data:
+    nginx_ssl_data:
     # Armazena as configurações dos seus proxies
     # - ./data:/data
     # Armazena os certificados SSL
