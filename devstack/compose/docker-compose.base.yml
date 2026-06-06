@@ -7,3 +7,4 @@ volumes:
     pgadmin_data:
     nginx_proxy_data:
     nginx_ssl_data:
+    portainer_data:
