@@ -1,13 +1,8 @@
-
-x-source-path: &source-path /Users/username/app/src
-x-target-path: &target-path /app/src
-
 services:
   nginx-manager:
-    image: 'jc21/nginx-proxy-manager:2.15.0'
-    container_name: nginx-manager
-    env_file:
-      - .env
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx
+    env_file: .env
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
@@ -16,27 +11,21 @@ services:
       - "${NGINX_WEBADMIN_PORT_HOST}:${NGINX_WEBADMIN_PORT_CONTAINER}" # Admin Web Port
       # Add any other Stream port you want to expose
       # - "21:21" # FTP
-    
-    depends_on:
-      - postgres   
-    volumes: 
-      - type: bind  	
-    x-source-path: &source-path /Users/username/app/src
-    x-target-path: &target-path /app/src
-
     environment:
       TZ: "America/Sao Paulo"
-      SOURCE_PATH: *source-path
+    volumes: 
+      - nginx_proxy_data:/data # Armazena as configurações dos seus proxies  
+      - nginx_ssl_data:/etc/letsencrypt # Armazena os certificados SSL 
     networks:
       - praxis-network
- 
+
 networks:
   praxis-network:
     name: praxis-network
     driver: bridge
 volumes:
-    nginx_proxy_data: {NGINX_PROXIES_DATA}
-    nginx_ssl_data: {NGINX_CERTS_DATA}
+    nginx_proxy_data:
+    nginx_ssl_data:
     # Armazena as configurações dos seus proxies
     # - ./data:/data
     # Armazena os certificados SSL
