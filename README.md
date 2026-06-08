@@ -4,9 +4,9 @@
 
 - Webservice monolito com recursos acessados nas formas de `URL's mapeadas em views renderizadas` via **template engine** e endpoints expostos em `JSON` via **REST API** desenvolvido com majoritariamente com **Java 25 e Spring Boot 4 (MVC + REST)**.
 
-- Para detalhes técnicos veja a [documentação](docs/README.md);
+- Para detalhes técnicos veja [documentação](docs/README.md);
 
-- Para `BUILD LOCAL` veja [documentação](devstack/README.md);
+- Para `ambiente dev` veja [build local](devstack/README.md);
 
 ## Abstract
 
