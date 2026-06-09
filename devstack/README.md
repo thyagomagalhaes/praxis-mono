@@ -1,6 +1,6 @@
 # 🧭 Práxis DevStack — Stack Local
 
-- Infraestrutura de desenvolvimento pronta para uso com **Docker Compose**, focada em padronizar o sobe/desce e operação dos seguintes serviços de apoio entre projetos: 
+- Infraestrutura de desenvolvimento pronta para uso com **Docker Compose**, focada em padronizar o sobe / desce da operação dos seguintes serviços de apoio entre projetos: 
 
     - Portainer
     - Nginx Proxy Manager
@@ -42,7 +42,9 @@ make nginx-up
 make down
 ```
 
-### Serviços Expostos (App rodando no Host)
+---
+
+## Serviços Expostos (App rodando no Host)
 
 | Serviço | Host + Porta | Virtual Host | Função |
 |---|---|---|
@@ -50,7 +52,6 @@ make down
 | PostgreSQL | `jdbc:postgresql://localhost:5432/` | `jdbc:postgresql://praxis.local:5432/` | URL SGBD
 | pgAdmin | `http://localhost:5050` | `http://pgadmin.praxis.local` | Console / admin web do SGBD
 | Portainer CE | `http://localhost:9443` | `http://portainer.praxis.local` | Console / admin web do SGBD
-
 
 
 ---
@@ -80,14 +81,13 @@ Como seu backend (rodando fora de containers, na sua IDE) deve se conectar à st
 
 - **Postgres:** host `localhost` ou `praxis.local` e porta `5432`;
 
-
 (Se o backend rodar _dentro_ da rede `praxis-network`, use o nome do container como host e a porta interna. Ex: `http://pgadmin:5050`).
 
 ---
 
 ## 🧰 Operações úteis (Makefile)
 
-Logs e diagnóstico:
+- Logs e diagnóstico:
 
 ```bash
 make logs        # split 2x2: Nginx | PostgreSQL | Portainer (requer tmux)
