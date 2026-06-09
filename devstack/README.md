@@ -44,12 +44,12 @@ make down
 
 ---
 
-## 🚀 Serviços Expostos (App rodando no Host)
+## 🚀 Serviços Expostos ( App rodando no Host )
 
-| Serviço | Host + Porta | Virtual Host ou Stream + Porta | Função |
-| --- | --- | --- | --- |
-| Nginx Proxy Manager | `http://localhost:81` | `http://nginx.praxis.local` | Proxy reverso, redirections e streams
-| PostgreSQL | `jdbc:postgresql://localhost:5432/` | `jdbc:postgresql://praxis.local:5432/` | URL SGBD
+| Serviço | Host + Porta | Virtual Hosts ( Nginx Proxy ) | Redirection Hosts ( Nginx Redirections ) | Nginx Streams ( Stream + Porta ) | Função |
+| --- | --- | --- | --- | --- |  --- |
+| Nginx Proxy Manager | `http://localhost:81` | `http://nginx.praxis.local` | --- | --- | Proxy reverso, redirections e streams
+| PostgreSQL | `jdbc:postgresql://localhost:5432/` | `jdbc:postgresql://praxis.local:5432/` | URL SGBD 
 | pgAdmin | `http://localhost:5050` | `http://pgadmin.praxis.local` | Console / admin web do SGBD
 | Portainer CE | `http://localhost:9443` | `http://portainer.praxis.local` | Console / admin web para orquestração do Docker Compose
 
