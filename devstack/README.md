@@ -3,14 +3,14 @@
 - Infraestrutura de desenvolvimento pronta para uso com **Docker Compose**, focada em padronizar o sobe/desce e operação dos seguintes serviços de apoio entre projetos: 
 
     - Portainer
-    - Nginx
-    - PostgreSQL
+    - Nginx Proxy Manager
+    - PostgreSQL + pgAdmin
 
 ---
 
 ## 🚀 Como usar (via Makefile)
 
-1.  Adição de `virtual hosts`:
+1.  Primeiro faça a adição dos `virtual hosts`:
 
 ```bash
 127.0.0.1 localhost
@@ -21,7 +21,7 @@
 ```
 
 2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;
-3.  Use os alvos do Makefile para subir os serviços desejados:
+3.  Use os alvos do `Makefile` para subir os serviços desejados:
 
 <!-- end list -->
 
@@ -35,7 +35,7 @@ make portainer-up
 # Somente PostgreSQL + pgAdmin
 make postgres-up
 
-# Somente Nginx + Nginx Proxy Manager
+# Somente Nginx Proxy Manager
 make nginx-up
 
 # Para encerrar tudo
@@ -44,9 +44,13 @@ make down
 
 ### Serviços Expostos (App rodando no Host)
 
-- **Nginx Proxy Controller:** `http://nginx.praxis.local` ou `http://localhost:81`
-- **PgAdmin:** `http://pgadmin.praxis.local` ou `http://localhost:5050`
-- **Portainer CE:** `http://portainer.praxis.local` ou `http://localhost:9443`
+| Serviço | Host + Porta | Virtual Host | Função |
+|---|---|---|
+| Nginx Proxy Manager | `http://localhost:81` | `http://nginx.praxis.local` | Proxy reverso, redirections e streams
+| PostgreSQL | `jdbc:postgresql://localhost:5432/` | `jdbc:postgresql://praxis.local:5432/` | URL SGBD
+| pgAdmin | `http://localhost:5050` | `http://pgadmin.praxis.local` | Console / admin web do SGBD
+| Portainer CE | `http://localhost:9443` | `http://portainer.praxis.local` | Console / admin web do SGBD
+
 
 
 ---
@@ -65,7 +69,7 @@ compose/
 
 Principais papéis:
 
-- `compose/*.yml`: Composição por serviço (base, Nginx, Portainer e etc.).
+- `compose/*.yml`: Composição dos serviço (base, PostgreSQL + pgAdmin, Nginx, Portainer e etc ).
 
 ---
 
@@ -74,7 +78,7 @@ Principais papéis:
 Como seu backend (rodando fora de containers, na sua IDE) deve se conectar à stack Docker:
 
 
-- **Postgres:** host `localhost` ou `www.praxis.local` e porta `5432`;
+- **Postgres:** host `localhost` ou `praxis.local` e porta `5432`;
 
 
 (Se o backend rodar _dentro_ da rede `praxis-network`, use o nome do container como host e a porta interna. Ex: `http://pgadmin:5050`).
@@ -89,7 +93,7 @@ Logs e diagnóstico:
 make logs        # split 2x2: Nginx | PostgreSQL | Portainer (requer tmux)
 make nginx-logs   # apenas Nginx
 make postgres-logs  # apenas PostgreSQL
-make portainer-logos # apenas Portainer
+make portainer-logs # apenas Portainer
 make tail        # últimos logs de todos
 ```
 
