@@ -46,10 +46,10 @@ make down
 
 ## 🚀 Serviços Expostos ( App rodando no Host )
 
-| Serviço |  Função | Porta | Virtual Hosts / Nginx Proxy ) | Redirection Hosts | Streams ( Stream + Porta ) | Protocolo TCP/IP |
+| Serviço |  Função | Porta | Virtual Hosts / Nginx Proxy | Redirection Hosts | Streams | Protocolo TCP/IP |
 | --- | --- | --- | --- | --- |  --- |  --- |
 | Nginx Proxy Manager | Proxy reverso, redirections e streams | `81` | `nginx.praxis.local` | --- | --- | HTTP |
-| PostgreSQL | URL de conexão com o SGBD | `5432` | --- | --- | `praxis.local:5432` OU `NOME_CONTAINER_POSTGRES:5432` OU `IP_CONTAINER:5432`  |  JDBC:POSTGRESQL  |
+| PostgreSQL | URL de conexão com o SGBD | `5432` | --- | --- | `praxis.local` OU `nome_container` OU `ip_container`  |  JDBC:POSTGRESQL  |
 | pgAdmin |  Console / admin web do SGBD | `5050` | `pgadmin.praxis.local` | --- | --- | HTTP |
 | Portainer CE | Console / admin web para orquestração do Docker Compose | `9443` | `portainer.praxis.local` | --- | --- | HTTP |
 
@@ -64,7 +64,7 @@ compose/
   ├── docker-compose.base.yml
   ├── docker-compose.nginx.yml
   ├── docker-compose.portainer.yml
-  └──  docker-compose.postgres.yml
+  └── docker-compose.postgres.yml
 ```
 
 Principais papéis:
