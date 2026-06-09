@@ -8,12 +8,31 @@
 
 ---
 
+## ⚙️ Estrutura do diretório
+
+A estrutura é organizada por serviço e por arquivos de composição:
+
+```
+compose/
+  ├── docker-compose.base.yml
+  ├── docker-compose.nginx.yml
+  ├── docker-compose.portainer.yml
+  └── docker-compose.postgres.yml
+```
+
+Principais papéis:
+
+- `compose/*.yml`: Composição dos serviços (base, PostgreSQL + pgAdmin, Nginx, Portainer e etc ).
+
+---
+
 ## 🚀 Como usar (via Makefile)
 
 1.  Primeiro faça a adição dos `virtual hosts`:
 
 ```bash
 127.0.0.1 localhost
+127.0.0.1 postgresql
 127.0.0.1 praxis.local
 127.0.0.1 nginx.praxis.local 
 127.0.0.1 pgadmin.praxis.local
@@ -49,36 +68,19 @@ make down
 | Serviço |  Função | Porta | Virtual Hosts / Nginx Proxy | Redirection Hosts | Streams | Protocolo TCP/IP |
 | --- | --- | --- | --- | --- |  --- |  --- |
 | Nginx Proxy Manager | Proxy reverso, redirections e streams | `81` | `nginx.praxis.local` | --- | --- | HTTP |
-| PostgreSQL | URL de conexão com o SGBD | `5432` | --- | --- | `praxis.local` OU `nome_container` OU `ip_container`  |  JDBC:POSTGRESQL  |
+| PostgreSQL | URL de conexão com o SGBD | `5432` | --- | --- | `postgresql` OU `nome_container` OU `ip_container`  |  JDBC:POSTGRESQL  |
 | pgAdmin |  Console / admin web do SGBD | `5050` | `pgadmin.praxis.local` | --- | --- | HTTP |
 | Portainer CE | Console / admin web para orquestração do Docker Compose | `9443` | `portainer.praxis.local` | --- | --- | HTTP |
 
 ---
 
-## ⚙️ Estrutura do diretório
-
-A estrutura é organizada por serviço e por arquivos de composição:
-
-```
-compose/
-  ├── docker-compose.base.yml
-  ├── docker-compose.nginx.yml
-  ├── docker-compose.portainer.yml
-  └── docker-compose.postgres.yml
-```
-
-Principais papéis:
-
-- `compose/*.yml`: Composição dos serviço (base, PostgreSQL + pgAdmin, Nginx, Portainer e etc ).
-
----
 
 ## 🔌 Conectando seu backend (Rodando no Host)
 
 Como seu backend (rodando fora de containers, na sua IDE) deve se conectar à stack Docker:
 
 
-- **Postgres:** host `localhost` ou `praxis.local` e porta `5432`;
+- **PostgreSQL:** host `postgresql` ou `praxis.local` e porta `5432`;
 
 (Se o backend rodar _dentro_ da rede `praxis-network`, use o nome do container como host e a porta interna. Ex: `http://pgadmin:5050`).
 
