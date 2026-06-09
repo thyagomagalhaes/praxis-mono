@@ -48,10 +48,10 @@ make down
 
 | Serviço | Host + Porta | Virtual Hosts ( Nginx Proxy ) | Redirection Hosts ( Nginx Redirections ) | Nginx Streams ( Stream + Porta ) | Função |
 | --- | --- | --- | --- | --- |  --- |
-| Nginx Proxy Manager | `http://localhost:81` | `http://nginx.praxis.local` | --- | --- | Proxy reverso, redirections e streams
-| PostgreSQL | `jdbc:postgresql://localhost:5432/` | `jdbc:postgresql://praxis.local:5432/` | URL SGBD 
-| pgAdmin | `http://localhost:5050` | `http://pgadmin.praxis.local` | Console / admin web do SGBD
-| Portainer CE | `http://localhost:9443` | `http://portainer.praxis.local` | Console / admin web para orquestração do Docker Compose
+| Nginx Proxy Manager | `localhost:81` | `nginx.praxis.local` | --- | --- | Proxy reverso, redirections e streams |
+| PostgreSQL | `localhost:5432/` | --- | --- | `praxis.local:5432` OU `NOME_CONTAINER_POSTGRES:5432` OU `IP_CONTAINER:5432`  | URL de conexão com o SGBD | 
+| pgAdmin | `localhost:5050` | `pgadmin.praxis.local` | --- | --- | Console / admin web do SGBD |
+| Portainer CE | `localhost:9443` | `portainer.praxis.local` | --- | --- | Console / admin web para orquestração do Docker Compose |
 
 ---
 
