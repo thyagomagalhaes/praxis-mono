@@ -1,8 +1,9 @@
-# Práxis — SUAS
+# 🧭 Stacks
 
 ## Tecnologias
 
-### Backend
+### Back-end
+
 | Tecnologia | Versão | Função |
 |---|---|---|
 | Java | 25 | Linguagem de programação |
@@ -20,17 +21,23 @@
 | Apache Commons BeanUtils | 1.11.0 |  |
 | Jackson JSON |  |  |
 
-### Infraestrutura
+### Front-end
+
+
+
+### 🚀 Infraestrutura
+
 | Tecnologia | Versão | Função |
 |---|---|---|
 | Docker | — | Containerização |
 | Docker Compose | — | Orquestração local |
 | Portainer CE | — | Interface gráfica para o Docker Compose |
-| Nginx Proxy Manager | — | Proxy hosts, redirections hosts, streams e etc |
+| Nginx Proxy Manager | — | Nginx + Console Admin: Proxy hosts, redirections hosts, streams e etc |
 | PostgreSQL + pgAdmin | — | SGBD + Admin |  
 | eclipse-temurin:25-jre | — | Imagem base de runtime (suporta ARM64) |
 
 ### Testes
+
 | Ferramenta | Escopo |
 |---|---|
 |
