@@ -47,13 +47,11 @@ make down
 ## 🚀 Serviços Expostos (App rodando no Host)
 
 | Serviço | Host + Porta | Virtual Host | Função |
-
 | --- | --- | --- | --- |
 | Nginx Proxy Manager | `http://localhost:81` | `http://nginx.praxis.local` | Proxy reverso, redirections e streams
 | PostgreSQL | `jdbc:postgresql://localhost:5432/` | `jdbc:postgresql://praxis.local:5432/` | URL SGBD
 | pgAdmin | `http://localhost:5050` | `http://pgadmin.praxis.local` | Console / admin web do SGBD
 | Portainer CE | `http://localhost:9443` | `http://portainer.praxis.local` | Console / admin web do SGBD
-
 
 ---
 
