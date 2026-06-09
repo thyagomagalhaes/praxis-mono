@@ -1,7 +1,7 @@
 services:
   portainer:
     container_name: portainer
-    env_file: .env
+    env_file: devstack.env
     image: portainer/portainer-ce:lts
     restart: unless-stopped
     volumes:
@@ -9,7 +9,7 @@ services:
       - portainer_data:/data
     ports:
       - "${PORTAINER_HTTP_PORT_HOST}:${PORTAINER_HTTP_PORT_CONTAINER}"
-      - 9443:9443
+      #- 9443:9443
       #- 8000:8000  # Remove if you do not intend to use Edge Agents
 
 volumes:
