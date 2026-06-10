@@ -2,7 +2,7 @@ services:
     postgres:
         image: postgres:latest
         container_name: postgres
-        env_file: devstack.env
+        env_file: "devstack.env"
         environment:
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -19,7 +19,7 @@ services:
     pgadmin:
         image: dpage/pgadmin4:latest
         container_name: pgadmin
-        env_file: devstack.env
+        env_file: "devstack.env"
         environment:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
