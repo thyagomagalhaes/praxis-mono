@@ -2,17 +2,22 @@ services:
   nginx-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx
-    env_file: devstack.env
+    env_file: "devstack.env"
     restart: unless-stopped
     ports:
+      #"${VAR:-default}:${VAR:-default}"
       # These ports are in format <host-port>:<container-port>
-      - "${NGINX_HTTP_PORT_HOST}:${NGINX_HTTP_PORT_CONTAINER}" # Public HTTP Port
-      - "${NGINX_HTTPS_PORT_HOST}:${NGINX_HTTPS_PORT_CONTAINER}" # Public HTTPS Port
-      - "${NGINX_WEBADMIN_PORT_HOST}:${NGINX_WEBADMIN_PORT_CONTAINER}" # Admin Web Port
+      - "${NGINX_HTTP_PORT_HOST:-80}:${NGINX_HTTP_PORT_CONTAINER:-80}" # Public HTTP Port
+      - "${NGINX_HTTPS_PORT_HOST:-443}:${NGINX_HTTPS_PORT_CONTAINER:-443}" # Public HTTPS Port
+      - "${NGINX_WEBADMIN_PORT_HOST:-81}:${NGINX_WEBADMIN_PORT_CONTAINER:-81}" # Admin Web Port
       # Add any other Stream port you want to expose
       # - "21:21" # FTP
     environment:
+      # NGINX_HTTP_PORT_CONTAINER: ${NGINX_HTTP_PORT_CONTAINER}
+      # NGINX_HTTPS_PORT_CONTAINER: ${NGINX_HTTPS_PORT_CONTAINER}
+      # NGINX_WEBADMIN_PORT_CONTAINER: ${NGINX_WEBADMIN_PORT_CONTAINER}
       TZ: "America/Sao Paulo"
+      
     volumes: 
       - nginx_proxy_data:/data # Armazena as configurações dos seus proxies  
       - nginx_ssl_data:/etc/letsencrypt # Armazena os certificados SSL 

@@ -75,7 +75,10 @@ postgres-down:
 	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_POSTGRES) stop
 	
 postgres-logs:
-	docker logs -f $(PGADMIN_CONTAINER) -f $(POSTGRES_CONTAINER)
+	docker logs -f $(POSTGRES_CONTAINER)
+
+pgadmin-logs:
+	docker logs -f $(PGADMIN_CONTAINER)
 
 all-up: up
 
