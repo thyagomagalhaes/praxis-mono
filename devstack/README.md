@@ -5,6 +5,9 @@
     - Portainer
     - Nginx Proxy Manager
     - PostgreSQL + pgAdmin
+    
+- Remove tudo: `docker system prune --all` 
+- Remove volumes: `docker volume rm $(docker volume ls -q) --force`
 
 ---
 
