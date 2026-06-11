@@ -2,16 +2,16 @@ services:
     postgres:
         image: postgres:latest
         container_name: postgres
-        env_file: 
-            - devstack.env
+        env_file:
+            - .env   
         environment:
-            POSTGRES_USER: ${VAR_POSTGRES_USER}
-            POSTGRES_PASSWORD: ${VAR_POSTGRES_PASSWORD}
-            POSTGRES_DB: ${VAR_POSTGRES_DB}
+            POSTGRES_USER: ${KEY_POSTGRES_USER}
+            POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD}
+            POSTGRES_DB: ${KEY_POSTGRES_DB}
         volumes:
-            - postgres_data:/var/lib/postgresql/data/pgdata
+            - postgres_data:/var/lib/postgresql
         ports:
-            - "${VAR_POSTGRES_PORT_HOST}:5432"
+            - "${POSTGRES_HOST}:${POSTGRES_CONTAINER}"
         networks:
             - praxis-network
         restart: unless-stopped
@@ -19,27 +19,32 @@ services:
     pgadmin:
         image: dpage/pgadmin4:latest
         container_name: pgadmin
-        env_file: 
-            - devstack.env
+        env_file:
+            - .env
         environment:
-            PGADMIN_DEFAULT_EMAIL: ${VAR_PGADMIN_DEFAULT_EMAIL}
-            PGADMIN_DEFAULT_PASSWORD: ${VAR_PGADMIN_DEFAULT_PASSWORD}
-            PGADMIN_CONFIG_SERVER_MODE: ${VAR_PGADMIN_CONFIG_SERVER_MODE}
+            PGADMIN_DEFAULT_EMAIL: ${KEY_PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${KEY_PGADMIN_DEFAULT_PASSWORD}
+            # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
+            PGADMIN_LIST_PORT: ${PGADMIN_CONTAINER}
+            PGADMIN_LISTEN_ADDRESS: ${KEY_PGADMIN_LISTEN_ADDRESS} 
+            PGADMIN_CONFIG_SERVER_MODE: ${KEY_PGADMIN_CONFIG_SERVER_MODE}
         volumes:
             - pgadmin_data:/var/lib/pgadmin
         depends_on:
             - postgres
         ports:
-            - "${VAR_PGADMIN_PORT_HOST}:5050"
+            - "${PGADMIN_HOST}:${PGADMIN_CONTAINER}"
         networks:
             - praxis-network
         restart: unless-stopped
+
+volumes:
+    postgres_data:
+    pgadmin_data:
 
 networks:
     praxis-network:
         name: praxis-network
         driver: bridge
 
-volumes:
-    postgres_data:
-    pgadmin_data:
+

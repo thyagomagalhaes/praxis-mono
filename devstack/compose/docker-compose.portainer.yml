@@ -1,15 +1,15 @@
 services:
   portainer:
     container_name: portainer
-    env_file: 
-      - devstack.env
+    env_file:
+      - .env
     image: portainer/portainer-ce:lts
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     ports:
-      - "${VAR_PORTAINER_HTTP_PORT_HOST}:9443"
+      - "${PORTAINER_HTTP_HOST}:${PORTAINER_HTTP_CONTAINER}"
       #- 8000:8000  # Remove if you do not intend to use Edge Agents
     networks:
      - praxis-network
