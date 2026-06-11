@@ -35,9 +35,8 @@ Principais papéis:
 
 ```bash
 127.0.0.1 localhost
-127.0.0.1 postgresql
-127.0.0.1 praxis.local
-127.0.0.1 nginx.praxis.local 
+127.0.0.1 nginx.praxis.local
+127.0.0.1 postgresql.praxis.local 
 127.0.0.1 pgadmin.praxis.local
 127.0.0.1 portainer.praxis.local
 ```
@@ -64,6 +63,15 @@ make nginx-up
 make down
 ```
 
+4. Insira as entradas do **NGINX** com os `virtual hosts específicos`:
+
+- **Proxies**: `pgAdmin`, `portainer` e `nginx`
+- **Streams**: Para o serviço do `PostgreSQL` e outros que rodam sobre o TCP
+- **Redirections**: Redirecionar o `localhost` e o `127.0.0.1`para a `nginx`. A página de apresentação do `nginx` também deve ser *desabilitada*;
+
+5. Reinicie o host.
+
+
 ---
 
 ## 🚀 Serviços Expostos ( App rodando no Host )
@@ -83,9 +91,10 @@ make down
 Como seu backend (rodando fora de containers, na sua IDE) deve se conectar à stack Docker:
 
 
-- **PostgreSQL:** host `postgresql` ou `praxis.local` e porta `5432`;
+- **PostgreSQL:**
 
-(Se o backend rodar _dentro_ da rede `praxis-network`, use o nome do container como host e a porta interna. Ex: `http://pgadmin:5050`).
+  - `URL`: jdbc:postgresql://postgresql.praxis.local , não precisando informar a porta uma vez que está configurado o **stream Nginx ** 
+  - Se o backend rodar _dentro_ da rede `praxis-network`, use o nome do container como host e a porta interna. Ex: `http://pgadmin:5050`).
 
 ---
 

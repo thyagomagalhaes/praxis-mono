@@ -3,12 +3,12 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx
     env_file: 
-      - devstack.env
+      - .env
     restart: unless-stopped
     ports:
-      - "${VAR_NGINX_HTTP_PORT_HOST}:80" # Public HTTP Port
-      - "${VAR_NGINX_HTTPS_PORT_HOST}:443"  # Public HTTPS Port
-      - "${VAR_NGINX_WEBADMIN_PORT_HOST}:81"  # Admin Web Port
+      - "${NGINX_HTTP_HOST}:${NGINX_HTTP_CONTAINER}" # Public HTTP Port
+      - "${NGINX_HTTPS_HOST}:${NGINX_HTTPS_CONTAINER}" # Public HTTPS Port
+      - "${NGINX_WEBADMIN_HOST}:${NGINX_WEBADMIN_CONTAINER}" # Admin Web Port
       # Add any other Stream port you want to expose
       # - "21:21" # FTP
     environment:

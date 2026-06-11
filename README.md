@@ -1,6 +1,6 @@
 # Práxis — SUAS
 
-- MVP que serve de hub para prestação de serviços e atendimentos pelos municípios às famílias e indivíduos em condição de vulnerabilidade  / ou risco social; em consonância com as tipificações do Sistema Único da Assistência Social ( SUAS ); com acréscimo de experiências aplicadas no município do Recife - PE;
+- PoC que traz a proposta de ser no futuro um hub para prestação de serviços e atendimentos pelos municípios às famílias e indivíduos em condição de vulnerabilidade  / ou risco social; em consonância com as tipificações do Sistema Único da Assistência Social ( SUAS ); com acréscimo de experiências aplicadas no município do Recife - PE;
 
 - Webservice monolito com recursos acessados nas formas de `URL's mapeadas em views renderizadas` via **template engine** e endpoints expostos em `JSON` via **REST API** desenvolvido com majoritariamente com **Java 25 e Spring Boot 4 (MVC + REST)**.
 
