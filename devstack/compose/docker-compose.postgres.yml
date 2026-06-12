@@ -22,11 +22,14 @@ services:
         env_file:
             - .env
         environment:
+            # explicitly tell pgAdmin to permit internal or local top-level domains
+            # PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: ${KEY_PGADMIN_EMAIL_DOMAINS} 
             PGADMIN_DEFAULT_EMAIL: ${KEY_PGADMIN_DEFAULT_EMAIL}
             PGADMIN_DEFAULT_PASSWORD: ${KEY_PGADMIN_DEFAULT_PASSWORD}
             # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
             PGADMIN_LIST_PORT: ${PGADMIN_CONTAINER}
             PGADMIN_LISTEN_ADDRESS: ${KEY_PGADMIN_LISTEN_ADDRESS} 
+            # For enables or disables the pgadmin4 login screen.
             PGADMIN_CONFIG_SERVER_MODE: ${KEY_PGADMIN_CONFIG_SERVER_MODE}
         volumes:
             - pgadmin_data:/var/lib/pgadmin
