@@ -36,8 +36,7 @@ Principais papéis:
 ```bash
 127.0.0.1 localhost
 127.0.0.1 nginx.praxis.local
-127.0.0.1 postgresql.praxis.local 
-127.0.0.1 pgadmin.praxis.local
+127.0.0.1 postgresql.praxis.local pgadmin.praxis.local
 127.0.0.1 portainer.praxis.local
 ```
 
