@@ -1,6 +1,13 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
+# Created by https://www.gitignore.io/api/git,java,maven,eclipse,windows
+
+# Variáveis de ambiente locais (contém credenciais)
+.env
+.env.*
+!.env.example
+
 ### STS ###
 .apt_generated
 .classpath
@@ -9,14 +16,6 @@
 .settings
 .springBeans
 .sts4-cache
-
-
-# Created by https://www.gitignore.io/api/git,java,maven,eclipse,windows
-
-# Variáveis de ambiente locais (contém credenciais)
-.env
-.env.*
-!.env.example
 
 ### Eclipse ###
 
