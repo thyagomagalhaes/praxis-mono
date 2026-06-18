@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis:8.2
+    container_name: redis-dev
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data_dev:/data
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight-dev
+    restart: unless-stopped
+    ports:
+      - "${REDISINSIGHT_PORT}:5540"
+    volumes:
+      - redisinsight_data_dev:/data
+    depends_on:
+      - redis
+
+networks:
+  praxis-network:
+    name: praxis-network
+
+volumes:
+  redis_data_dev:
+  redisinsight_data_dev:

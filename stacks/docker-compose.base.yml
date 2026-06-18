@@ -1,0 +1,29 @@
+#include:
+#    - path: 
+#        - ./docker-compose.nginx.yml
+#        - ./docker-compose.portainer.yml
+#        - ./docker-compose.postgres.yml 
+#      project_directory: ..
+#      env_file:
+#        - ./infra/.env   
+#        - ./dev/.env 
+#     - ./app2-data/.env
+#
+#services:
+#    nginx-manager:
+#    portainer:
+#    postgres:
+#    pgadmin:     
+
+networks:
+    praxis-network-dev:
+        driver: bridge
+
+volumes:
+    postgres_data_dev:
+    pgadmin_data_dev:
+    redis_data_dev:
+    redisinsight_data_dev:
+    nginx_proxy_data_infra:
+    nginx_ssl_data_infra:
+    portainer_data_infra:
