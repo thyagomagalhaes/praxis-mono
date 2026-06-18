@@ -3,23 +3,33 @@ services:
     image: redis:8.2
     container_name: redis-dev
     restart: unless-stopped
-    ports:
-      - "${REDIS_PORT}:6379"
     command: redis-server --requirepass ${REDIS_PASSWORD}
+#    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    ports:
+      - "${REDIS_HOST}:${REDIS_CONTAINER}"
+    
     volumes:
+#      - ../redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
       - redis_data_dev:/data
+    networks:
+      - praxis-network
 
   redisinsight:
     image: redis/redisinsight:latest
     container_name: redisinsight-dev
     restart: unless-stopped
     ports:
-      - "${REDISINSIGHT_PORT}:5540"
-    volumes:
-      - redisinsight_data_dev:/data
+      - "${REDISINSIGHT_PORT}:${REDISINSIGHT_CONTAINER}"
     depends_on:
       - redis
-
+    volumes:
+      - redisinsight_data_dev:/data
+    networks:
+      - praxis-network
+#    environment:
+#      - RI_APP_FEATURES=browser,database_analysis,workbench
+#      - REDISINSIGHT_CONNECTIONS=[{"name":"Local Redis","host":"redis","port":6379,"username":"","password":"q52ma/BY7Z+4mJAucRLoQ/HiwbC3g3QGMOM1aj+twAqjZrPRhet2C6AguHtEVKvgnAIuqedC1kinDsaW"}]
+      
 networks:
   praxis-network:
     name: praxis-network
@@ -27,3 +37,4 @@ networks:
 volumes:
   redis_data_dev:
   redisinsight_data_dev:
+ 
