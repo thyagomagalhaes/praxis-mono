@@ -8,6 +8,10 @@
 .env.*
 !.env.example
 
+# Ignorar configuracoes de  hml
+
+stacks/hml/
+
 ### STS ###
 .apt_generated
 .classpath

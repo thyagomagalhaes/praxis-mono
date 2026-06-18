@@ -6,8 +6,6 @@
     - Nginx Proxy Manager
     - PostgreSQL + pgAdmin
     
-- Remove tudo: `docker system prune --all` 
-- Remove volumes: `docker volume rm $(docker volume ls -q) --force`
 
 ---
 
@@ -34,10 +32,16 @@ Principais papéis:
 1.  Primeiro faça a adição dos `virtual hosts`:
 
 ```bash
+# Virtual hosts
+
 127.0.0.1 localhost
-127.0.0.1 nginx.praxis.local
-127.0.0.1 postgresql.praxis.local pgadmin.praxis.local
-127.0.0.1 portainer.praxis.local
+127.0.0.1 www.praxis.dev sso.praxis.dev
+127.0.0.1 nginx.tech portainer.tech
+127.0.0.1 pgadmin.dev redisinsight.dev
+
+# Streams
+
+127.0.0.1 postgresql.dev redis.dev
 ```
 
 2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;
@@ -61,6 +65,8 @@ make nginx-up
 # Para encerrar tudo
 make down
 ```
+
+- É bom ao dar `docker system prune --all` um depois de *derrubar os serviços e assim limpar o Docker*.  
 
 4. Insira as entradas do **NGINX** com os `virtual hosts específicos`:
 

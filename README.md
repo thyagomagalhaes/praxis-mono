@@ -1,14 +1,22 @@
 # Práxis — SUAS
 
-- PoC que traz a proposta de ser no futuro um hub para prestação de serviços e atendimentos pelos municípios às famílias e indivíduos em condição de vulnerabilidade  / ou risco social; em consonância com as tipificações do Sistema Único da Assistência Social ( SUAS ); com acréscimo de experiências aplicadas no município do Recife - PE;
+- PoC de uma solução digital de **gestão do acolhimento institucional de indivíduos e familias** em condição de vulnerabilidade e/ou risco social;
 
-- Webservice monolito com recursos acessados nas formas de `URL's mapeadas em views renderizadas` via **template engine** e endpoints expostos em `JSON` via **REST API** desenvolvido com majoritariamente com **Java 25 e Spring Boot 4 (MVC + REST)**.
+- Esse projeto nasceu diante da necessidade prospectada de *digitalização dos processos de movimentação de entrada e saída de indivíduos e famílias em Casa de Acolhida do município do Recife/PE*;
+
+- A Casa em questão é a **CAT O Recomeço**, uma *Unidade de Acolhimento institucional de permanência temporária para mulheres e filhos* cujos registros físicos *apresentam dados de famílias acolhidas desde 2002*;
+
+- Informações cadastrais **das famílias e os indivíduos integrantes**, **do período e histórico do acolhimento ( com admissões, saídas e reentradas)**, **do registro de atendimentos ( escutas, acompanhamentos, direcionamentos ), evoluções e encaminhamentos ( e suas formas)**, **administração e prestação de contas de benefícios sóciais** recebidos por àqueles bem como um **painel de observabilidade** - contendo a apresentação de um *dashboard* de informações prestadas em tempo real sobre as *vagas disponíveis e o perfil do público atendido* são algumas das funcionalidades ofertadas neste PoC;   
+
+- A presente solução trata-se de um *webservice monolito modular* com recursos acessados nas formas de `URL's mapeadas em views renderizadas` via **template engine** e endpoints expostos em `JSON` via **REST API** desenvolvido com majoritariamente com **Java 25 e Spring Boot 4 (MVC + REST)**.
 
 - Para detalhes técnicos veja [documentação](docs/README.md);
 
 - Para `ambiente dev` veja [build local](devstack/README.md);
 
 ## Abstract
+
+- A proposta é de um MVP como um hub para prestação de serviços e atendimentos pelos municípios às famílias e indivíduos em condição de vulnerabilidade  / ou risco social; em consonância com as tipificações do Sistema Único da Assistência Social ( SUAS ); com acréscimo de experiências aplicadas no município do Recife - PE;
 
 - A assistência social está organizada por meio do Sistema Único de Assistência Social ( SUAS ), presente em todo o Brasil. Seu objetivo é garantir a proteção social aos cidadãos, ou seja, apoio a indivíduos, famílias e à comunidade no enfrentamento de suas dificuldades, por meio de serviços, benefícios, programas e projetos;
 

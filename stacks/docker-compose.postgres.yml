@@ -1,7 +1,7 @@
 services:
     postgres:
         image: postgres:latest
-        container_name: postgres
+        container_name: postgres-dev
         env_file:
             - .env   
         environment:
@@ -9,7 +9,7 @@ services:
             POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD}
             POSTGRES_DB: ${KEY_POSTGRES_DB}
         volumes:
-            - postgres_data:/var/lib/postgresql
+            - postgres_data_dev:/var/lib/postgresql
         ports:
             - "${POSTGRES_HOST}:${POSTGRES_CONTAINER}"
         networks:
@@ -18,7 +18,7 @@ services:
 
     pgadmin:
         image: dpage/pgadmin4:latest
-        container_name: pgadmin
+        container_name: pgadmin-dev
         env_file:
             - .env
         environment:
@@ -26,13 +26,15 @@ services:
             # PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: ${KEY_PGADMIN_EMAIL_DOMAINS} 
             PGADMIN_DEFAULT_EMAIL: ${KEY_PGADMIN_DEFAULT_EMAIL}
             PGADMIN_DEFAULT_PASSWORD: ${KEY_PGADMIN_DEFAULT_PASSWORD}
-            # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
-            PGADMIN_LIST_PORT: ${PGADMIN_CONTAINER}
-            PGADMIN_LISTEN_ADDRESS: ${KEY_PGADMIN_LISTEN_ADDRESS} 
+            PGADMIN_LISTEN_ADDRESS: ${KEY_PGADMIN_LISTEN_ADDRESS}    
+            PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: ${KEY_PGADMIN_CONFIG_CHECK_EMAIL}
+            TZ: ${KEY_TZ}
             # For enables or disables the pgadmin4 login screen.
             PGADMIN_CONFIG_SERVER_MODE: ${KEY_PGADMIN_CONFIG_SERVER_MODE}
+            # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
+            PGADMIN_LISTEN_PORT: ${PGADMIN_CONTAINER}
         volumes:
-            - pgadmin_data:/var/lib/pgadmin
+            - pgadmin_data_dev:/var/lib/pgadmin
         depends_on:
             - postgres
         ports:
@@ -42,12 +44,11 @@ services:
         restart: unless-stopped
 
 volumes:
-    postgres_data:
-    pgadmin_data:
+    postgres_data_dev:
+    pgadmin_data_dev:
 
 networks:
     praxis-network:
         name: praxis-network
         driver: bridge
-
 

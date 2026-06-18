@@ -7,19 +7,22 @@
 | Tecnologia | Versão | Função |
 |---|---|---|
 | Java | 25 | Linguagem de programação |
-| Spring Boot | 4.0.6 | Framework guarda-chuva / principal |
-| Spring Core / Framework | 7.0.7 | Core do Spring |
+| Spring Core / Framework | 7.0.8 | Core do Spring |
+| Spring Boot | 4.1.0 | Framework guarda-chuva / principal |
+| Spring Web MVC | - | Endpoints REST API pattern e views MVC pattern |
+| Spring Docker Compose | - | Suporte para orquestração local |
+| Spring Data JPA + Hibernate  | - + 7.4.1 | ORM e persistência |
 | Spring Modulith | 2.0.6 | Arquitetura monolítica e modular. |
-| Spring Web MVC | 4.0.6 | Endpoints REST API pattern e views MVC pattern |
 | Thymeleaf | | Template engine server-side para views MVC |
-| Spring Data JPA + Hibernate  | 4.0.6 + 7.2.12 | ORM e persistência |
-| Bean Validation with Hibernate Validator | 9.0.1 | Validação | 
-| Flyway | 10.10.0 | Versionamento de banco de dados ( migrações e callbacks ) |
+| Bean Validation with Hibernate Validator | 9.1.0 | Validação |
+| Flyway | 12.4.0 | Versionamento de banco de dados ( migrações e callbacks ) |
 | HikariCP | 7.0.2  | Pool de conexões |
-| PostgreSQL JDBC Driver | 47.7.10 | Java JDBC driver for PostgreSQL database |
-| Spring Docker Compose | 4.0.6 | Suporte para orquestração local |
+| PostgreSQL JDBC Driver | 42.7.11 | Java JDBC driver for PostgreSQL database |
+
 | Apache Commons BeanUtils | 1.11.0 |  |
 | Jackson JSON |  |  |
+| Spring Cache |  | Armazenamento em cache com o Redis  |
+| Spring Cloud Sleuth |  | busca, coleta, transformação e visualização junto com o ecossistema ElasticSearch  |
 
 ### Front-end
 
@@ -34,7 +37,7 @@
 | Portainer CE | — | Interface gráfica para o Docker Compose |
 | Nginx Proxy Manager | — | Nginx + Console Admin: Proxy hosts, redirections hosts, streams e etc |
 | PostgreSQL + pgAdmin | — | SGBD + Admin |  
-| eclipse-temurin:25-jre | — | Imagem base de runtime (suporta ARM64) |
+| JDK | OpenJDK Temurin 25.0.2 LTS | Imagem base de runtime (suporta ARM64) |
 
 ### Testes
 
