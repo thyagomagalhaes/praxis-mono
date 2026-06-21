@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+    # The ngrok tunnel service
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok-infra
+    env_file: 
+      - .env
+    restart: unless-stopped
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    # Command format: http <service_name>:<internal_port>
+    command: http web-app:80
+    ports:
+      - "4040:4040" # Opens the local ngrok web dashboard
+    depends_on:
+      - nginx
+    networks:
+      - praxis-network
+
+networks:
+  praxis-network:
+    name: praxis-network
+    driver: bridge
+    

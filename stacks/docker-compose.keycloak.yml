@@ -1,0 +1,18 @@
+services:
+  keycloak-fsw:
+    image: quay.io/keycloak/keycloak:26.6.3
+    container_name: keycloak-fsw
+    command: start-dev
+    ports:
+      - 8080:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=mysql
+      - KC_DB_URL=jdbc:mysql://db:3306/keycloak
+      - KC_DB_USERNAME=root
+      - KC_DB_PASSWORD=root
+    depends_on:
+      mysql-fsw:
+        condition: service_healthy
+    

@@ -16,14 +16,15 @@
 #    pgadmin:     
 
 networks:
-    praxis-network-dev:
+    praxis-network:
         driver: bridge
 
 volumes:
-    postgres_data_dev:
-    pgadmin_data_dev:
-    redis_data_dev:
-    redisinsight_data_dev:
+    mysql_data_fsw:
     nginx_proxy_data_infra:
     nginx_ssl_data_infra:
+    postgres_data_fsw:
+    pgadmin_data_client:
+    redis_data_fsw:
+    redisinsight_data_client:   
     portainer_data_infra:
