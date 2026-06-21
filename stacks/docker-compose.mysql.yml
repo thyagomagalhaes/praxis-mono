@@ -1,0 +1,36 @@
+services:
+  mysql-fsw:
+    image: mysql:9.7-debian
+    container_name: mysql-fsw
+    env_file:
+        - .env   
+    environment:
+        MYSQL_ROOT_PASSWORD: ${KEY_MYSQL_ROOT_PWD_FSW}
+        MYSQL_DATABASE: ${KEY_MYSQL_DB_FSW}
+        MYSQL_USER: ${KEY_MYSQL_USER_FSW}
+        MYSQL_PASSWORD: ${KEY_MYSQL_USER_PWD_FSW}
+    volumes:
+        - mysql_data_fsw:/var/lib/mysql
+        # Optional: Uncomment below to automatically run initial SQL scripts on startup
+      # - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+        - "${MYSQL_HOST_FSW}:${MYSQL_CONTAINER_FSW}"
+    networks:
+        - praxis-network
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+volumes:
+    mysql_data_fsw:
+
+networks:
+    praxis-network:
+        name: praxis-network
+        driver: bridge
+                

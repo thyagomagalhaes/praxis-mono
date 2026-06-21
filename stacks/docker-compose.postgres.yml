@@ -1,24 +1,30 @@
 services:
-    postgres:
-        image: postgres:latest
-        container_name: postgres-dev
+    postgres-fsw:
+        image: postgres:17-alpine
+        container_name: postgres-fsw
         env_file:
             - .env   
         environment:
-            POSTGRES_USER: ${KEY_POSTGRES_USER}
-            POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD}
-            POSTGRES_DB: ${KEY_POSTGRES_DB}
+            POSTGRES_USER: ${KEY_POSTGRES_USER_FSW}
+            POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD_FSW}
+            POSTGRES_DB: ${KEY_POSTGRES_DB_FSW}
         volumes:
-            - postgres_data_dev:/var/lib/postgresql
+            - postgres_data_fsw:/var/lib/postgresql
         ports:
-            - "${POSTGRES_HOST}:${POSTGRES_CONTAINER}"
+            - "${POSTGRES_HOST_FSW}:${POSTGRES_CONTAINER_FSW}"
         networks:
             - praxis-network
         restart: unless-stopped
+        
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
 
-    pgadmin:
+    pgadmin-client:
         image: dpage/pgadmin4:latest
-        container_name: pgadmin-dev
+        container_name: pgadmin-client
         env_file:
             - .env
         environment:
@@ -34,18 +40,19 @@ services:
             # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
             PGADMIN_LISTEN_PORT: ${PGADMIN_CONTAINER}
         volumes:
-            - pgadmin_data_dev:/var/lib/pgadmin
-        depends_on:
-            - postgres
+            - pgadmin_data_client:/var/lib/pgadmin 
         ports:
             - "${PGADMIN_HOST}:${PGADMIN_CONTAINER}"
         networks:
             - praxis-network
         restart: unless-stopped
+        depends_on:
+            postgres-fsw:
+              condition: service_healthy
 
 volumes:
-    postgres_data_dev:
-    pgadmin_data_dev:
+    postgres_data_fsw:
+    pgadmin_data_client:
 
 networks:
     praxis-network:

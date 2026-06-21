@@ -36,12 +36,13 @@ Principais papéis:
 
 127.0.0.1 localhost
 127.0.0.1 www.praxis.dev sso.praxis.dev
-127.0.0.1 nginx.tech portainer.tech
-127.0.0.1 pgadmin.dev redisinsight.dev
+127.0.0.1 nginx.tech manager.nginx.tech portainer.tech
+127.0.0.1 keycloak.tech
+127.0.0.1 pgadmin.tech redisinsight.tech
 
 # Streams
 
-127.0.0.1 postgresql.dev redis.dev
+127.0.0.1 mysql.dev postgresql.dev redis.dev 
 ```
 
 2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;
@@ -83,10 +84,16 @@ make down
 
 | Serviço |  Função | Porta | Virtual Hosts / Nginx Proxy | Redirection Hosts | Streams | Protocolo TCP/IP |
 | --- | --- | --- | --- | --- |  --- |  --- |
-| Nginx Proxy Manager | Proxy reverso, redirections e streams | `81` | `nginx.praxis.local` | --- | --- | HTTP |
+| Keycloak | Identity and Access Management - IAM | `8080` | `keycloak.tech` | --- | --- | HTTP |
+| Realm Práxis | SSO Práxis | `8181` | `sso.praxis.dev` | --- | --- | HTTP |
+| Práxis Monolito | Práxis | `8585` | `www.praxis.dev` | --- | --- | HTTP |
+| MySQL | URL de conexão com o SGBD | `3306` | --- | --- | `mysql` OU `nome_container` OU `ip_container`  |  JDBC:MYSQL  |
+| Nginx Proxy Manager | Proxy reverso, redirections e streams | `81` | `manager.nginx.tech` | --- | --- | HTTP |
 | PostgreSQL | URL de conexão com o SGBD | `5432` | --- | --- | `postgresql` OU `nome_container` OU `ip_container`  |  JDBC:POSTGRESQL  |
-| pgAdmin |  Console / admin web do SGBD | `5050` | `pgadmin.praxis.local` | --- | --- | HTTP |
-| Portainer CE | Console / admin web para orquestração do Docker Compose | `9443` | `portainer.praxis.local` | --- | --- | HTTP |
+| pgAdmin |  Console / admin web do SGBD | `5050` | `pgadmin.tech` | --- | --- | HTTP |
+| Redis | URL de conexão com o SGBD | `5432` | --- | --- | `redis` OU `nome_container` OU `ip_container`  |  JDBC:REDIS  |
+| RedisInsight |  Console / admin web do SGBD | `5050` | `redisinsight.tech` | --- | --- | HTTP |
+| Portainer CE | Console / admin web para orquestração do Docker Compose | `9443` | `portainer.tech` | --- | --- | HTTP |
 
 ---
 

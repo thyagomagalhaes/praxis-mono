@@ -18,7 +18,6 @@
 | Flyway | 12.4.0 | Versionamento de banco de dados ( migrações e callbacks ) |
 | HikariCP | 7.0.2  | Pool de conexões |
 | PostgreSQL JDBC Driver | 42.7.11 | Java JDBC driver for PostgreSQL database |
-
 | Apache Commons BeanUtils | 1.11.0 |  |
 | Jackson JSON |  |  |
 | Spring Cache |  | Armazenamento em cache com o Redis  |
