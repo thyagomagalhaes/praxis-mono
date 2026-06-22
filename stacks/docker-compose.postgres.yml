@@ -21,8 +21,10 @@ services:
             interval: 10s
             timeout: 5s
             retries: 3
+            
   # postgresql-sgbd-homolog:
   #     container_name: postgresql-hml
+  
     pgadmin-console:
         image: dpage/pgadmin4:latest
         container_name: pgadmin-cli
