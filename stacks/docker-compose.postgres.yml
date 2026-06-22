@@ -1,7 +1,7 @@
 services:
-    postgres-fsw:
+    postgresql-sgbd-fabrica:
         image: postgres:17-alpine
-        container_name: postgres-fsw
+        container_name: postgresql-fsw
         env_file:
             - .env   
         environment:
@@ -21,10 +21,11 @@ services:
             interval: 10s
             timeout: 5s
             retries: 3
-
-    pgadmin-client:
+  # postgresql-sgbd-homolog:
+  #     container_name: postgresql-hml
+    pgadmin-console:
         image: dpage/pgadmin4:latest
-        container_name: pgadmin-client
+        container_name: pgadmin-cli
         env_file:
             - .env
         environment:
@@ -47,7 +48,7 @@ services:
             - praxis-network
         restart: unless-stopped
         depends_on:
-            postgres-fsw:
+            postgresql-sgbd-fabrica:
               condition: service_healthy
 
 volumes:

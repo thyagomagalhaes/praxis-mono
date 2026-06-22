@@ -1,7 +1,7 @@
 services:
-  nginx-manager:
+  nginx-infra:
     image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-infra
+    container_name: nginx-manager
     env_file: 
       - .env
     restart: unless-stopped
@@ -11,6 +11,9 @@ services:
       - "${NGINX_WEBADMIN_HOST}:${NGINX_WEBADMIN_CONTAINER}" # Admin Web Port
       # Add any other Stream port you want to expose
       # - "21:21" # FTP
+      - "${MYSQL_HOST_FSW}:${MYSQL_CONTAINER_FSW}" # MySQL FSW
+      - "${POSTGRES_HOST_FSW}:${POSTGRES_CONTAINER_FSW}" # PostgreSQL FSW
+      - "${REDIS_HOST_FSW}:${REDIS_CONTAINER_FSW}" # Redis FSW
     environment:
       TZ: "America/Sao Paulo"
       
@@ -19,6 +22,13 @@ services:
       - nginx_ssl_data_infra:/etc/letsencrypt # Armazena os certificados SSL 
     networks:
       - praxis-network
+      
+    healthcheck: 
+      test: ["CMD", "/usr/bin/check-health"] 
+      interval: 10s 
+      timeout: 3s 
+      retries: 3 
+      start_period: 10s
 
 networks:
   praxis-network:

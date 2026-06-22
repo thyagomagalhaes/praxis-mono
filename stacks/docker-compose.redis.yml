@@ -1,5 +1,5 @@
 services:
-  redis-cache:
+  redis-cache-fabrica:
     image: redis:8.2
     container_name: redis-fsw
     restart: unless-stopped
@@ -20,14 +20,18 @@ services:
       retries: 3
       start_period: 5s
 
-  redisinsight-client:
+# redis-cache-homolog:
+#    image: redis:8.2
+#    container_name: redis-hml
+    
+  redisinsight-console:
     image: redis/redisinsight:latest
-    container_name: redisinsight-client
+    container_name: redisinsight-cli
     restart: unless-stopped
     ports:
-      - "${REDISINSIGHT_HOST_FSW}:${REDISINSIGHT_CONTAINER_FSW}"
+      - "${REDISINSIGHT_HOST}:${REDISINSIGHT_CONTAINER}"
     depends_on:
-      redis-fsw:
+      redis-cache-fabrica:
         condition: service_healthy
     volumes:
       - redisinsight_data_client:/data
