@@ -1,4 +1,4 @@
-# 🧭 Práxis DevStack — Stack Local
+# 🧭 SUAS Flow DevStack — Stack Local
 
 - Infraestrutura de desenvolvimento pronta para uso com **Docker Compose**, focada em padronizar o sobe / desce da operação dos seguintes serviços de apoio entre projetos: 
 

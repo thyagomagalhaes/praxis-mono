@@ -25,6 +25,7 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+      
  # mysql-sgbd-homolog:
  #   container_name: mysql-hml
  

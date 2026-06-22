@@ -14,7 +14,7 @@ services:
     command: start-dev
     ports:
 #      - 8080:8080
-      - ${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}
+      - "${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}"
     depends_on:
       mysql-sgbd-fabrica:
         condition: service_healthy
