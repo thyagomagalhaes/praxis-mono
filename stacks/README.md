@@ -29,20 +29,23 @@ Principais papéis:
 
 ## 🚀 Como usar (via Makefile)
 
-1.  Primeiro faça a adição dos `virtual hosts`:
+1.  Primeiro faça as adições dos `virtual hosts` e dos `streams`:
 
 ```bash
 # Virtual hosts
 
-127.0.0.1 localhost
-127.0.0.1 www.praxis.dev sso.praxis.dev
-127.0.0.1 nginx.tech manager.nginx.tech portainer.tech
-127.0.0.1 keycloak.tech
-127.0.0.1 pgadmin.tech redisinsight.tech
+127.0.0.1 nginx
+127.0.0.1 nginx.tech ngrok.tech
+127.0.0.1 keycloak.tech portainer.tech
+127.0.0.1 www.catorecomeco.dev www.catorecomeco.staging
+127.0.0.1 sso.suasflow.dev sso.suasflow.staging
+127.0.0.1 pgadmin.io redisinsight.io phpmyadmin.io
 
 # Streams
 
-127.0.0.1 mysql.dev postgresql.dev redis.dev 
+127.0.0.1 mysql.dev postgresql.dev redis.dev
+127.0.0.1 mysql.staging postgresql.staging redis.staging
+ 
 ```
 
 2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;

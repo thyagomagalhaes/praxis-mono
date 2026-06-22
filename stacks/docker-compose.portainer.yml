@@ -1,7 +1,7 @@
 services:
-  portainer:
+  portainer-infra:
     image: portainer/portainer-ce:lts
-    container_name: portainer-infra
+    container_name: portainer-hub
     env_file:
       - .env 
     restart: unless-stopped

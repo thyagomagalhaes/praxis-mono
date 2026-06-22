@@ -1,14 +1,14 @@
 services:
-  mysql-fsw:
+  mysql-sgbd-fabrica:
     image: mysql:9.7-debian
     container_name: mysql-fsw
     env_file:
         - .env   
     environment:
-        MYSQL_ROOT_PASSWORD: ${KEY_MYSQL_ROOT_PWD_FSW}
-        MYSQL_DATABASE: ${KEY_MYSQL_DB_FSW}
-        MYSQL_USER: ${KEY_MYSQL_USER_FSW}
-        MYSQL_PASSWORD: ${KEY_MYSQL_USER_PWD_FSW}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PWD_FSW}
+        MYSQL_DATABASE: ${MYSQL_DB_FSW}
+        MYSQL_USER: ${MYSQL_USER_FSW}
+        MYSQL_PASSWORD: ${MYSQL_USER_PWD_FSW}
     volumes:
         - mysql_data_fsw:/var/lib/mysql
         # Optional: Uncomment below to automatically run initial SQL scripts on startup
@@ -25,7 +25,28 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
-
+ # mysql-sgbd-homolog:
+ #   container_name: mysql-hml
+ 
+  phpmyadmin-console:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-cli
+    networks:
+      - praxis-network
+    restart: unless-stopped
+    ports:
+#      - "8080:80"
+      - ${PHPMYADMIN_HOST}:${PHPMYADMIN_CONTAINER}"
+    env_file:
+      - .env 
+    environment:
+      PMA_HOST_FSW: mysql-fsw
+      PMA_PORT_FSW: ${MYSQL_CONTAINER_FSW}
+#     PMA_HOST_HOMOLOG: db
+#     PMA_PORT_HOMOLOG: 
+    depends_on:
+      mysql-sgbd-fabrica:
+        condition: service_healthy
 volumes:
     mysql_data_fsw:
 

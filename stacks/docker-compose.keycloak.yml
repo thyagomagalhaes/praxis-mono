@@ -1,18 +1,28 @@
 services:
-  keycloak-fsw:
+  keycloak-iam-fabrica:
     image: quay.io/keycloak/keycloak:26.6.3
     container_name: keycloak-fsw
-    command: start-dev
-    ports:
-      - 8080:8080
+    env_file: 
+      - .env
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
       - KC_DB=mysql
-      - KC_DB_URL=jdbc:mysql://db:3306/keycloak
+      - KC_DB_URL=jdbc:mysql://mysql.dev/keycloak_db_dev
       - KC_DB_USERNAME=root
       - KC_DB_PASSWORD=root
+    command: start-dev
+    ports:
+#      - 8080:8080
+      - ${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}
     depends_on:
-      mysql-fsw:
+      mysql-sgbd-fabrica:
         condition: service_healthy
-    
+# keycloak-iam-homolog:
+#   image: quay.io/keycloak/keycloak:26.6.3
+#   container_name: keycloak-hml
+
+networks:
+    praxis-network:
+        name: praxis-network
+        driver: bridge
