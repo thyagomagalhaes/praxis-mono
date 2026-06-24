@@ -1,4 +1,4 @@
-# Práxis — SUAS
+# SUAS Flux
 
 - PoC de uma solução digital de **gestão do acolhimento institucional de indivíduos e familias** em condição de vulnerabilidade e/ou risco social;
 

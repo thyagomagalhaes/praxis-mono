@@ -1,4 +1,4 @@
-# 🧭 SUAS Flow DevStack — Stack Local
+# 🧭 SUAS Flux DevStack — Stack Local
 
 - Infraestrutura de desenvolvimento pronta para uso com **Docker Compose**, focada em padronizar o sobe / desce da operação dos seguintes serviços de apoio entre projetos: 
 
@@ -38,13 +38,14 @@ Principais papéis:
 127.0.0.1 nginx.tech ngrok.tech
 127.0.0.1 keycloak.tech portainer.tech
 127.0.0.1 www.catorecomeco.dev www.catorecomeco.staging
-127.0.0.1 sso.suasflow.dev sso.suasflow.staging
+127.0.0.1 mail.suasflux.dev mail.suasflux.staging
+127.0.0.1 sso.suasflux.dev sso.suasflux.staging
 127.0.0.1 pgadmin.io redisinsight.io phpmyadmin.io
 
 # Streams
 
-127.0.0.1 mysql.dev postgresql.dev redis.dev
-127.0.0.1 mysql.staging postgresql.staging redis.staging
+127.0.0.1 mysql.dev postgresql.dev redis.dev sendgrid.dev
+127.0.0.1 mysql.staging postgresql.staging redis.staging sendrid.staging
  
 ```
 
