@@ -39,14 +39,17 @@ Principais papéis:
 127.0.0.1 keycloak.tech portainer.tech
 127.0.0.1 www.catorecomeco.dev www.catorecomeco.staging
 127.0.0.1 mail.suasflux.dev mail.suasflux.staging
-127.0.0.1 sso.suasflux.dev sso.suasflux.staging
 127.0.0.1 pgadmin.io redisinsight.io phpmyadmin.io
+
+# Virtual hosts with custom locations
+# Realms keycloak
+
+127.0.0.1 sso.suasflux.dev sso.suasflux.staging
 
 # Streams
 
 127.0.0.1 mysql.dev postgresql.dev redis.dev sendgrid.dev
-127.0.0.1 mysql.staging postgresql.staging redis.staging sendrid.staging
- 
+127.0.0.1 mysql.staging postgresql.staging redis.staging sendgrid.staging
 ```
 
 2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;
