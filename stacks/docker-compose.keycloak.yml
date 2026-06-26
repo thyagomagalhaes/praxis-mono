@@ -5,15 +5,15 @@ services:
     env_file: 
       - .env
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_DB=mysql
-      - KC_DB_URL=jdbc:mysql://mysql.dev/keycloak_db_dev
-      - KC_DB_USERNAME=root
-      - KC_DB_PASSWORD=root
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_LOGIN_FSW}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PWD_FSW}
+       # Configuração do Banco de Dados vinculada ao serviço acima
+      KC_DB: ${KEYCLOAK_BD_SGBD_FSW}
+      KC_DB_URL: ${KEYCLOAK_BD_URL_FSW}
+      KC_DB_USERNAME: ${KEYCLOAK_BD_USER_FSW}
+      KC_DB_PASSWORD: ${KEYCLOAK_BD_PWD_FSW}
     command: start-dev
     ports:
-#      - 8080:8080
       - "${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}"
     depends_on:
       mysql-sgbd-fabrica:

@@ -5,9 +5,9 @@ services:
         env_file:
             - .env   
         environment:
-            POSTGRES_USER: ${KEY_POSTGRES_USER_FSW}
-            POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD_FSW}
-            POSTGRES_DB: ${KEY_POSTGRES_DB_FSW}
+            POSTGRES_USER: ${POSTGRES_USER_FSW}
+            POSTGRES_PASSWORD: ${POSTGRES_PWD_FSW}
+            POSTGRES_DB: ${POSTGRES_DB_FSW}
         volumes:
             - postgres_data_fsw:/var/lib/postgresql
         ports:
@@ -32,14 +32,14 @@ services:
             - .env
         environment:
             # explicitly tell pgAdmin to permit internal or local top-level domains
-            # PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: ${KEY_PGADMIN_EMAIL_DOMAINS} 
-            PGADMIN_DEFAULT_EMAIL: ${KEY_PGADMIN_DEFAULT_EMAIL}
-            PGADMIN_DEFAULT_PASSWORD: ${KEY_PGADMIN_DEFAULT_PASSWORD}
-            PGADMIN_LISTEN_ADDRESS: ${KEY_PGADMIN_LISTEN_ADDRESS}    
-            PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: ${KEY_PGADMIN_CONFIG_CHECK_EMAIL}
-            TZ: ${KEY_TZ}
+            # PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: ${PGADMIN_EMAIL_DOMAINS} 
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL_FSW}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PWD_FSW}
+            PGADMIN_LISTEN_ADDRESS: ${PGADMIN_LISTEN_ADDRESS}    
+            PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: ${PGADMIN_CONFIG_CHECK_EMAIL}
+            TZ: ${PGADMIN_TZ}
             # For enables or disables the pgadmin4 login screen.
-            PGADMIN_CONFIG_SERVER_MODE: ${KEY_PGADMIN_CONFIG_SERVER_MODE}
+            PGADMIN_CONFIG_SERVER_MODE: ${PGADMIN_CONFIG_SERVER_MODE}
             # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
             PGADMIN_LISTEN_PORT: ${PGADMIN_CONTAINER}
         volumes:

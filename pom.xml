@@ -124,7 +124,31 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- Segurança Nativa OAuth2 (Substitui os adaptadores Keycloak) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
 		
+		<!--  Template Engine E integração do Thymeleaf com Spring Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>
+
 		<!-- DevTools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -139,19 +163,18 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-			
-		
-        <!--Apache Commons BeanUtils --> 
+
+
+		<!--Apache Commons BeanUtils --> 
 		<dependency>
     		<groupId>commons-beanutils</groupId>
     		<artifactId>commons-beanutils</artifactId>
     		<version>1.11.0</version>
     		<scope>compile</scope>
 		</dependency>
-		
-	
-        
-        <!--   OpenHtmlToPdf 
+
+
+		<!--   OpenHtmlToPdf 
          https://github.com/danfickle/openhtmltopdf 
 		<dependency>
 			<groupId>com.openhtmltopdf</groupId>

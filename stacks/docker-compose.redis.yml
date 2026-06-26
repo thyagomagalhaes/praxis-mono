@@ -3,7 +3,7 @@ services:
     image: redis:8.2
     container_name: redis-fsw
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD_FSW}
+    command: redis-server --requirepass ${REDIS_PWD_FSW}
 #   command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     ports:
       - "${REDIS_HOST_FSW}:${REDIS_CONTAINER_FSW}"
@@ -41,10 +41,10 @@ services:
 #      - RI_APP_FEATURES=browser,database_analysis,workbench
 #      - REDISINSIGHT_CONNECTIONS=[{"name":"Local Redis","host":"redis","port":6379,"username":"","password":"q52ma/BY7Z+4mJAucRLoQ/HiwbC3g3QGMOM1aj+twAqjZrPRhet2C6AguHtEVKvgnAIuqedC1kinDsaW"}]
       
-networks:
-  praxis-network:
-    name: praxis-network
-
 volumes:
   redis_data_fsw:
   redisinsight_data_client:
+  
+networks:
+  praxis-network:
+    name: praxis-network

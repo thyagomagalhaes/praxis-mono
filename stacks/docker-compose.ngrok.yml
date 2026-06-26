@@ -13,7 +13,7 @@ services:
     # Command format: http <service_name>:<internal_port>
     command: http nginx-infra:${NGINX_HTTP_CONTAINER}
     ports:
-#      - "4040:4040" # Opens the local ngrok web dashboard
+      # Opens the local ngrok web dashboard
       - "${NGROK_DASHBOARD_HOST}:${NGROK_DASHBOARD_CONTAINER}"
     depends_on:
       nginx-infra:

@@ -11,9 +11,9 @@ services:
       - "${NGINX_WEBADMIN_HOST}:${NGINX_WEBADMIN_CONTAINER}" # Admin Web Port
       # Add any other Stream port you want to expose
       # - "21:21" # FTP
-      - "${MYSQL_HOST_FSW}:${MYSQL_CONTAINER_FSW}" # MySQL FSW
-      - "${POSTGRES_HOST_FSW}:${POSTGRES_CONTAINER_FSW}" # PostgreSQL FSW
-      - "${REDIS_HOST_FSW}:${REDIS_CONTAINER_FSW}" # Redis FSW
+      # - "${MYSQL_HOST_FSW}:${MYSQL_CONTAINER_FSW}" # MySQL FSW
+      # - "${POSTGRES_HOST_FSW}:${POSTGRES_CONTAINER_FSW}" # PostgreSQL FSW
+      # - "${REDIS_HOST_FSW}:${REDIS_CONTAINER_FSW}" # Redis FSW
     environment:
       TZ: "America/Sao Paulo"
       

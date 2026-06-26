@@ -5,11 +5,11 @@
         portainer-up portainer-down portainer-logs \
         keycloak-up keycloak-down keycloak-logs \
         mysql-up mysql-down mysql-logs \
-        phpmyadmin-up phpmyadmin-down phpmyadmin-logs \
+        phpmyadmin-logs \
         postgres-up postgres-down postgres-logs \
-        pgadmin-up pgadmin-down pgadmin-logs \
+        pgadmin-logs \
         redis-up redis-down redis-logs \
-        redisinsight-up redisinsight-down redisinsight-logs \
+        redisinsight-logs \
         all-up all-down
 
 # Configuráveis via linha de comando: ex.: make up SOLR_CORE=meu_core PORT=8984
@@ -86,26 +86,68 @@ nginx-down:
 nginx-logs:
 	docker logs -f $(NGINX_MANAGER_CONTAINER_INFRA)
 	
+ngrok-up:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_NGROK) up -d
+    
+ngrok-down:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_NGROK) down
+    
+ngrok-logs:
+	docker logs -f $(NGROK_CONTAINER_INFRA)
+    
 portainer-up:
-	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_PORTAINER) up -d
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_PORTAINER) up -d
 
 portainer-down:
-	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_PORTAINER) stop
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_PORTAINER) down
 	
 portainer-logs:
 	docker logs -f $(PORTAINER_CONTAINER_INFRA)
+	
+mysql-up:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_MYSQL) up -d
+
+mysql-down:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_MYSQL) down
+	
+mysql-logs:
+	docker logs -f $(MYSQL_CONTAINER_FSW)
+	
+phpmyadmin-logs:
+	docker logs -f $(PHPMYADMIN_CONTAINER_CONSOLE)
+	
+keycloak-up:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_MYSQL) -f $(COMPOSE_KEYCLOAK) up -d
+
+keycloak-down:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_MYSQL) -f $(COMPOSE_KEYCLOAK) down
+	
+keycloak-logs:
+	docker logs -f $(KEYCLOAK_CONTAINER_FSW)
 
 postgres-up:
-	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_POSTGRES_DEV) up -d
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_POSTGRES) up -d
 
 postgres-down:
-	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_POSTGRES_DEV) stop
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_POSTGRES) down
 	
 postgres-logs:
-	docker logs -f $(POSTGRES_CONTAINER_DEV)
+	docker logs -f $(POSTGRES_CONTAINER_FSW)
 
 pgadmin-logs:
-	docker logs -f $(PGADMIN_CONTAINER_DEV)
+	docker logs -f $(PGADMIN_CONTAINER_CONSOLE)
+	
+redis-up:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_REDIS) up -d
+
+redis-down:
+	docker compose -f $(COMPOSE_BASE) -f $(COMPOSE_NGINX_MANAGER) -f $(COMPOSE_REDIS) stop
+	
+redis-logs:
+	docker logs -f $(REDIS_CONTAINER_FSW)
+
+redisinsight-logs:
+	docker logs -f $(REDISINSIGHT_CONTAINER_CONSOLE)
 
 all-up: up
 
