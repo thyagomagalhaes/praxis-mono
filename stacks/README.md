@@ -54,6 +54,7 @@ Principais papéis:
 
 2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;
 3.  Use os alvos do `Makefile` para subir os serviços desejados:
+4.  Para ver se tem uma porta ocupada ( identificamos o PID da porta ) sudo lsof -i <protocolo>:<porta> `sudo lsof -i TCP:8080` ; Para liberar a porta faça um: `sudo kill -9 <PID>` ; 
 
 <!-- end list -->
 
@@ -76,13 +77,13 @@ make down
 
 - É bom ao dar `docker system prune --all` um depois de *derrubar os serviços e assim limpar o Docker*.  
 
-4. Insira as entradas do **NGINX** com os `virtual hosts específicos`:
+5. Insira as entradas do **NGINX** com os `virtual hosts específicos`:
 
 - **Proxies**: `pgAdmin`, `portainer` e `nginx`
 - **Streams**: Para o serviço do `PostgreSQL` e outros que rodam sobre o TCP
 - **Redirections**: Redirecionar o `localhost` e o `127.0.0.1`para a `nginx`. A página de apresentação do `nginx` também deve ser *desabilitada*;
 
-5. Reinicie o host.
+6. Reinicie o host.
 
 
 ---

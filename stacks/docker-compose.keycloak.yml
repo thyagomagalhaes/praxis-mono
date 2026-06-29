@@ -2,6 +2,7 @@ services:
   keycloak-iam-fabrica:
     image: quay.io/keycloak/keycloak:26.6.3
     container_name: keycloak-fsw
+    command: start-dev
     env_file: 
       - .env
     environment:
@@ -12,7 +13,6 @@ services:
       KC_DB_URL: ${KEYCLOAK_BD_URL_FSW}
       KC_DB_USERNAME: ${KEYCLOAK_BD_USER_FSW}
       KC_DB_PASSWORD: ${KEYCLOAK_BD_PWD_FSW}
-    command: start-dev
     ports:
       - "${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}"
     depends_on:
