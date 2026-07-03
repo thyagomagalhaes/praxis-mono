@@ -45,8 +45,9 @@ praxis-monolito/
 │       └── resources/
 │           ├── application.properties
 │           ├── db
-|                ├── migration/ # Scripts Flyway (V01…V16)
-|                ├── testdata/  # população BD
+│                ├── migration/ # Scripts Flyway (V01…V16)
+│                ├── legacydata/  # população BD com os dados históricos registrados entre os anos de XXXX A XXXX. 
+│                ├── setupschema/ # Checagem e build dos schemas
 │           ├── templates/      # Views Thymeleaf
 │   └── test/
 │       ├── java/app/praxis/modulo/

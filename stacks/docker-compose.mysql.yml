@@ -2,6 +2,14 @@ services:
   mysql-sgbd-fabrica:
     image: mysql:9.7
     container_name: mysql-fsw
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1GB
+        reservations:
+          cpus: '0.5'
+          memory: 512MB
     env_file:
         - .env   
     environment:
@@ -21,10 +29,11 @@ services:
     security_opt:
       - seccomp:unconfined
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "${MYSQL_USER_FSW}", "-p${MYSQL_USER_PWD_FSW}"]
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PWD_FSW}"]
       interval: 5s
       timeout: 10s
       retries: 3
+      start_period: 30s  # Dá 30 segundos livres para o banco ligar
       
  # mysql-sgbd-homolog:
  #   container_name: mysql-hml
@@ -32,6 +41,14 @@ services:
   phpmyadmin-console:
     image: phpmyadmin:latest
     container_name: phpmyadmin-cli
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512MB
+        reservations:
+          cpus: '0.25'
+          memory: 256MB
     networks:
       - praxis-network
     restart: unless-stopped
