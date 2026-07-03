@@ -2,19 +2,45 @@ services:
   keycloak-iam-fabrica:
     image: quay.io/keycloak/keycloak:26.6.3
     container_name: keycloak-fsw
-    command: start-dev
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1500MB
+        reservations:
+          cpus: '0.5'
+          memory: 1000MB
+    command: ["start-dev", "--proxy-headers=xforwarded"]
+#    command: start-dev --hostname-strict=false --hostname-strict-https=false --proxy-headers=xforwarded
     env_file: 
       - .env
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_LOGIN_FSW}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PWD_FSW}
-       # Configuração do Banco de Dados vinculada ao serviço acima
       KC_DB: ${KEYCLOAK_BD_SGBD_FSW}
+      #      KC_DB_URL: jdbc:mysql://${KC_DB_URL_HOST}:${KC_DB_URL_PORT}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8
       KC_DB_URL: ${KEYCLOAK_BD_URL_FSW}
-      KC_DB_USERNAME: ${KEYCLOAK_BD_USER_FSW}
-      KC_DB_PASSWORD: ${KEYCLOAK_BD_PWD_FSW}
+      KC_DB_USERNAME: ${MYSQL_USER_FSW}
+      KC_DB_PASSWORD: ${MYSQL_USER_PWD_FSW}
+#      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_LOGIN_FSW}
+#      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PWD_FSW}
+#        Configuração do Banco de Dados vinculada ao serviço acima
+#      KC_DB: ${KEYCLOAK_BD_SGBD_FSW}
+#      KC_DB_URL: ${KEYCLOAK_BD_URL_FSW}
+#      KC_DB_USERNAME: ${KEYCLOAK_BD_USER_FSW}
+#      KC_DB_PASSWORD: ${KEYCLOAK_BD_PWD_FSW}
+#      KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLE}
+#       Permite que o Keycloak confie nos cabeçalhos gerados pelo Ngrok (ex: X-Forwarded-Proto)
+#      KC_PROXY_HEADERS: "xforwarded"
+#       Força o Keycloak a aceitar qualquer host que chegue (como o aleatório do Ngrok)
+#      KC_HOSTNAME_STRICT: "false"
+#      KC_HOSTNAME_STRICT_HTTPS: "false"
+#      KC_HOSTNAME: "https://recoup-slip-strained.ngrok-free.dev"
     ports:
       - "${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}"
+    networks:
+      - praxis-network
+    restart: unless-stopped
     depends_on:
       mysql-sgbd-fabrica:
         condition: service_healthy

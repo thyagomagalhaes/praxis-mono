@@ -2,6 +2,14 @@ services:
   portainer-infra:
     image: portainer/portainer-ce:lts
     container_name: portainer-hub
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'     # Cap usage at 50% of a single CPU core
+          memory: 512M     # Hard cap on RAM usage
+        reservations:
+          cpus: '0.25'     # Guarantee 25% of a core is available
+          memory: 256M     # Guarantee 256MB of RAM is available
     env_file:
       - .env 
     restart: unless-stopped

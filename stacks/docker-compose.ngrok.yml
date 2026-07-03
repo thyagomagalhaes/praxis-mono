@@ -1,17 +1,24 @@
-version: '3.8'
-
 services:
     # The ngrok tunnel service
   ngrok-infra:
     image: ngrok/ngrok:latest
-    container_name: ngrok-tunnel-webhooks
+    container_name: ngrok-tunnel-webhooks  
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.15'
+          memory: 64M
+        limits:
+          cpus: '0.50'        # Limita a metade de 1 núcleo
+          memory: 128M        # Margem segura para picos de conexões   
     env_file: 
       - .env
     restart: unless-stopped
     environment:
-      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+      - NGROK_AUTHTOKEN=${NGROK_TOKEN}  
     # Command format: http <service_name>:<internal_port>
-    command: http nginx-infra:${NGINX_HTTP_CONTAINER}
+    # command: http nginx-infra:${NGINX_HTTP_CONTAINER}
+    command: ["http", "--hostname", "${NGROK_PUBLIC_DOMAIN}", "nginx-infra:${NGINX_HTTP_CONTAINER}"]
     ports:
       # Opens the local ngrok web dashboard
       - "${NGROK_DASHBOARD_HOST}:${NGROK_DASHBOARD_CONTAINER}"

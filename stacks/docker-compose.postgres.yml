@@ -2,6 +2,15 @@ services:
     postgresql-sgbd-fabrica:
         image: postgres:17-alpine
         container_name: postgresql-fsw
+        # Resource Limits Block
+        deploy:
+           resources:
+              limits:
+               cpus: '1.0'      # Cap database at max 1 full CPU core
+               memory: 1024MB    # Hard limit on RAM allocation
+              reservations:
+               cpus: '0.25'     # Guaranteed minimum CPU fraction
+               memory: 256MB     # Guaranteed minimum RAM block
         env_file:
             - .env   
         environment:
@@ -28,6 +37,14 @@ services:
     pgadmin-console:
         image: dpage/pgadmin4:latest
         container_name: pgadmin-cli
+        deploy:
+            resources:
+              limits:
+                cpus: '0.5'
+                memory: 512MB
+              reservations:
+                cpus: '0.2'
+                memory: 256MB
         env_file:
             - .env
         environment:

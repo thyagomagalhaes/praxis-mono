@@ -2,6 +2,14 @@ services:
   nginx-infra:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-manager
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.10' # Garante pelo menos 10% de 1 núcleo
+          memory: 150MB # Garante pelo menos 150MB de RAM
+        limits:
+          cpus: '0.50' # Não deixa passar de 50% de 1 núcleo
+          memory: 350MB # Não deixa passar de 350MB de RAM 
     env_file: 
       - .env
     restart: unless-stopped
@@ -15,7 +23,7 @@ services:
       # - "${POSTGRES_HOST_FSW}:${POSTGRES_CONTAINER_FSW}" # PostgreSQL FSW
       # - "${REDIS_HOST_FSW}:${REDIS_CONTAINER_FSW}" # Redis FSW
     environment:
-      TZ: "America/Sao Paulo"
+      TZ: "America/Recife"
       
     volumes: 
       - nginx_proxy_data_infra:/data # Armazena as configurações dos seus proxies  

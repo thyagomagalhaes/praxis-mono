@@ -2,6 +2,14 @@ services:
   redis-cache-fabrica:
     image: redis:8.2
     container_name: redis-fsw
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 500MB
+        reservations:
+          cpus: '0.25'
+          memory: 200MB
     restart: unless-stopped
     command: redis-server --requirepass ${REDIS_PWD_FSW}
 #   command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
@@ -27,6 +35,14 @@ services:
   redisinsight-console:
     image: redis/redisinsight:latest
     container_name: redisinsight-cli
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512MB
+        reservations:
+          cpus: '0.25'
+          memory: 256MB
     restart: unless-stopped
     ports:
       - "${REDISINSIGHT_HOST}:${REDISINSIGHT_CONTAINER}"

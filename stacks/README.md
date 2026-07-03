@@ -52,9 +52,10 @@ Principais papéis:
 127.0.0.1 mysql.staging postgresql.staging redis.staging sendgrid.staging
 ```
 
-2.  Certifique-se de ter **Docker** e **Docker Compose** instalados;
-3.  Use os alvos do `Makefile` para subir os serviços desejados:
-4.  Para ver se tem uma porta ocupada ( identificamos o PID da porta ) sudo lsof -i <protocolo>:<porta> `sudo lsof -i TCP:8080` ; Para liberar a porta faça um: `sudo kill -9 <PID>` ; 
+2. Certifique-se de ter o **Certbot** instalado. Configure os domínios `HTTPS` no **NGINX**;
+3. Certifique-se de ter **Docker** e **Docker Compose** instalados;
+4. Use os alvos do `Makefile` para subir os serviços desejados:
+5. Para ver se tem uma porta ocupada ( identificamos o PID da porta ) sudo lsof -i <protocolo>:<porta> `sudo lsof -i TCP:8080` ; Para liberar a porta faça um: `sudo kill -9 <PID>` ; 
 
 <!-- end list -->
 
