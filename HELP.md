@@ -1,24 +1,18 @@
-# Read Me First
-The following was discovered as part of building this project:
-
-* No Docker Compose services found. As of now, the application won't start! Please add at least one service to the `compose.yaml` file.
-
 # Getting Started
 
 ### Reference Documentation
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/4.0.6/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/4.0.6/maven-plugin/build-image.html)
-* [Docker Compose Support](https://docs.spring.io/spring-boot/4.0.6/reference/features/dev-services.html#features.dev-services.docker-compose)
+* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/4.1.0/maven-plugin)
+* [Create an OCI image](https://docs.spring.io/spring-boot/4.1.0/maven-plugin/build-image.html)
+* [Spring Boot Actuator](https://docs.spring.io/spring-boot/4.1.0/reference/actuator/index.html)
+* [Vault Configuration](https://docs.spring.io/spring-cloud-vault/reference/)
 
-### Docker Compose support
-This project contains a Docker Compose file named `compose.yaml`.
+### Guides
+The following guides illustrate how to use some features concretely:
 
-However, no services were found. As of now, the application won't start!
-
-Please make sure to add at least one service in the `compose.yaml` file.
+* [Building a RESTful Web Service with Spring Boot Actuator](https://spring.io/guides/gs/actuator-service/)
 
 ### Maven Parent overrides
 

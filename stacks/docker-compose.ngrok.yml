@@ -1,8 +1,8 @@
 services:
     # The ngrok tunnel service
-  ngrok-infra:
+  ngrok:
     image: ngrok/ngrok:latest
-    container_name: ngrok-tunnel-webhooks  
+    container_name: ngrok  
     deploy:
       resources:
         reservations:
@@ -18,17 +18,17 @@ services:
       - NGROK_AUTHTOKEN=${NGROK_TOKEN}  
     # Command format: http <service_name>:<internal_port>
     # command: http nginx-infra:${NGINX_HTTP_CONTAINER}
-    command: ["http", "--hostname", "${NGROK_PUBLIC_DOMAIN}", "nginx-infra:${NGINX_HTTP_CONTAINER}"]
+    command: ["http", "--hostname", "${NGROK_PUBLIC_DOMAIN}", "nginx:${NGINX_HTTP_CONTAINER}"]
     ports:
       # Opens the local ngrok web dashboard
       - "${NGROK_DASHBOARD_HOST}:${NGROK_DASHBOARD_CONTAINER}"
     depends_on:
-      nginx-infra:
+      nginx:
         condition: service_healthy
     networks:
-      - praxis-network
+      - suasflux-network
 
 networks:
-    praxis-network:
-        name: praxis-network
+    suasflux-network:
+        name: suasflux-network
         driver: bridge

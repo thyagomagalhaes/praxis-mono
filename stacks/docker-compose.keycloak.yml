@@ -1,7 +1,7 @@
 services:
-  keycloak-iam-fabrica:
-    image: quay.io/keycloak/keycloak:26.6.3
-    container_name: keycloak-fsw
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.4
+    container_name: keycloak
     deploy:
       resources:
         limits:
@@ -15,40 +15,43 @@ services:
     env_file: 
       - .env
     environment:
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_LOGIN_FSW}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PWD_FSW}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_LOGIN_FSW}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PWD_FSW}
       KC_DB: ${KEYCLOAK_BD_SGBD_FSW}
       #      KC_DB_URL: jdbc:mysql://${KC_DB_URL_HOST}:${KC_DB_URL_PORT}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8
       KC_DB_URL: ${KEYCLOAK_BD_URL_FSW}
       KC_DB_USERNAME: ${MYSQL_USER_FSW}
       KC_DB_PASSWORD: ${MYSQL_USER_PWD_FSW}
-#      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_LOGIN_FSW}
-#      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PWD_FSW}
-#        Configuração do Banco de Dados vinculada ao serviço acima
-#      KC_DB: ${KEYCLOAK_BD_SGBD_FSW}
-#      KC_DB_URL: ${KEYCLOAK_BD_URL_FSW}
-#      KC_DB_USERNAME: ${KEYCLOAK_BD_USER_FSW}
-#      KC_DB_PASSWORD: ${KEYCLOAK_BD_PWD_FSW}
-#      KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLE}
-#       Permite que o Keycloak confie nos cabeçalhos gerados pelo Ngrok (ex: X-Forwarded-Proto)
-#      KC_PROXY_HEADERS: "xforwarded"
-#       Força o Keycloak a aceitar qualquer host que chegue (como o aleatório do Ngrok)
-#      KC_HOSTNAME_STRICT: "false"
-#      KC_HOSTNAME_STRICT_HTTPS: "false"
-#      KC_HOSTNAME: "https://recoup-slip-strained.ngrok-free.dev"
+      # Define que o Keycloak está atrás de um proxy reverso (como Nginx, HAProxy, AWS ALB, Traefik).
+      KC_PROXY: edge
+      # Informa ao Keycloak para ler e confiar nos cabeçalhos padrão X-Forwarded-* (como X-Forwarded-For, X-Forwarded-Proto, X-Forwarded-Host) enviados pelo seu proxy para identificar o IP real e o protocolo do cliente.
+      KC_PROXY_HEADERS: "xforwarded"
+      # Desliga exigência de domínio único para testes    
+      KC_HOSTNAME_STRICT: "false"
+      # Permite que o Keycloak aceite URLs de redirecionamento e endpoints usando o protocolo HTTP (sem criptografia).Atenção: Use apenas em ambientes de desenvolvimento. Em produção, mantenha como true.
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      # Permite que as URLs de comunicação interna (backchannel), como as usadas por adaptadores ou microsserviços para validar tokens, sejam resolvidas dinamicamente com base na requisição atual, em vez de usar uma URL fixa.
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HTTP_ENABLED: "true" # Permite http internamente no docker
+      #KC_HOSTNAME: "https://recoup-slip-strained.ngrok-free.dev"
+      KC_HOSTNAME: "http://keycloak.suasflux.prem"
+      #KC_HOSTNAME: "http://keycloak.tech"
+      #KC_HOSTNAME: "http://localhost"
+      
+      
     ports:
       - "${KEYCLOAK_HOST_FSW}:${KEYCLOAK_CONTAINER_FSW}"
     networks:
-      - praxis-network
+      - suasflux-network
     restart: unless-stopped
     depends_on:
-      mysql-sgbd-fabrica:
+      mysql:
         condition: service_healthy
 # keycloak-iam-homolog:
-#   image: quay.io/keycloak/keycloak:26.6.3
+#   image: quay.io/keycloak/keycloak:26.6.4
 #   container_name: keycloak-hml
 
 networks:
-    praxis-network:
-        name: praxis-network
+    suasflux-network:
+        name: suasflux-network
         driver: bridge

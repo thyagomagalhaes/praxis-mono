@@ -1,30 +1,22 @@
-#include:
-#    - path: 
-#        - ./docker-compose.nginx.yml
-#        - ./docker-compose.portainer.yml
-#        - ./docker-compose.postgres.yml 
-#      project_directory: ..
-#      env_file:
-#        - ./infra/.env   
-#        - ./dev/.env 
-#     - ./app2-data/.env
-#
-#services:
-#    nginx-manager:
-#    portainer:
-#    postgres:
-#    pgadmin:     
+# networks:
+#    suasflux-hub:
+#        driver: bridge
+#    suasflux-prem:
+#        driver: bridge
 
 networks:
-    praxis-network:
+    suasflux-network:
         driver: bridge
 
 volumes:
-    mysql_data_fsw:
-    nginx_proxy_data_infra:
-    nginx_ssl_data_infra:
-    postgres_data_fsw:
-    pgadmin_data_client:
-    redis_data_fsw:
-    redisinsight_data_client:   
-    portainer_data_infra:
+    mariadb_data:
+    mysql_data:
+    minio_data:
+    nginx_proxy_data:
+    nginx_ssl_data:
+    postgres_data:
+    pgadmin_data:
+    rabbitmq_data:
+    redis_data:
+    redisinsight_data:   
+    portainer_data:

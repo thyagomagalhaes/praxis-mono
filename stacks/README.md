@@ -3,8 +3,17 @@
 - Infraestrutura de desenvolvimento pronta para uso com **Docker Compose**, focada em padronizar o sobe / desce da operação dos seguintes serviços de apoio entre projetos: 
 
     - Portainer
+    - Ngrok
     - Nginx Proxy Manager
     - PostgreSQL + pgAdmin
+    - Mysql + PhpMyAdmin
+    - MariaDB + Adminer
+    - Redis + Redis Insight
+    - RabbitMQ
+    - Minio API + Minio Console
+    - Sendgrid
+    - Keycloak
+    - Vault
     
 
 ---
@@ -16,9 +25,18 @@ A estrutura é organizada por serviço e por arquivos de composição:
 ```
 compose/
   ├── docker-compose.base.yml
+  ├── docker-compose.keycloak.yml
+  ├── docker-compose.mariadb.yml
+  ├── docker-compose.minio.yml
+  ├── docker-compose.mysql.yml
   ├── docker-compose.nginx.yml
+  ├── docker-compose.ngrok.yml
   ├── docker-compose.portainer.yml
-  └── docker-compose.postgres.yml
+  ├── docker-compose.postgres.yml
+  ├── docker-compose.rabbitmq.yml
+  ├── docker-compose.redis.yml
+  ├── docker-compose.sendgrid.yml
+  └── docker-compose.vault.yml
 ```
 
 Principais papéis:
@@ -35,24 +53,55 @@ Principais papéis:
 # Virtual hosts
 
 127.0.0.1 nginx
-127.0.0.1 nginx.tech ngrok.tech
-127.0.0.1 keycloak.tech portainer.tech
-127.0.0.1 www.catorecomeco.dev www.catorecomeco.staging
-127.0.0.1 mail.suasflux.dev mail.suasflux.staging
-127.0.0.1 pgadmin.io redisinsight.io phpmyadmin.io
+127.0.0.1 suasflux.prem
+127.0.0.1 nginx.suasflux.prem  ngrok.suasflux.prem
+127.0.0.1 keycloak.suasflux.prem portainer.suasflux.prem
+127.0.0.1 www.catorecomeco.dev www.catorecomeco.hml
+127.0.0.1 mail.suasflux.dev mail.suasflux.hml
+127.0.0.1 adminer.suasflux.prem minio.suasflux.prem pgadmin.suasflux.prem rabbitmq.suasflux.prem redisinsight.suasflux.prem phpmyadmin.suasflux.prem vault.suasflux.prem
 
 # Virtual hosts with custom locations
 # Realms keycloak
 
-127.0.0.1 sso.suasflux.dev sso.suasflux.staging
+127.0.0.1 sso.suasflux.dev sso.suasflux.hml
 
 # Streams
 
-127.0.0.1 mysql.dev postgresql.dev redis.dev sendgrid.dev
-127.0.0.1 mysql.staging postgresql.staging redis.staging sendgrid.staging
+127.0.0.1 mariadb.dev minio.dev mysql.dev postgresql.dev rabbitmq.dev redis.dev sendgrid.dev
+127.0.0.1 mariadb.hml minio.hml mysql.hml postgresql.hml rabbitmq.hml redis.hml sendgrid.hml
 ```
 
 2. Certifique-se de ter o **Certbot** instalado. Configure os domínios `HTTPS` no **NGINX**;
+3. Cheque o status e habilite o firewall do host se necessário: para liberar as portas **HTTP e HTTPS**:
+
+```bash
+sudo ufw status
+Estado: inativo
+```
+
+```bash
+sudo ufw enable
+Firewall está ativo e habilitado na inicialização do sistema
+```
+
+```bash
+sudo ufw allow http
+sudo ufw allow https
+```
+
+```bash
+~$ sudo ufw status
+Estado: ativo
+
+Para                       Ação        De
+----                       ----        --
+80/tcp                     ALLOW       Anywhere                  
+443                        ALLOW       Anywhere                  
+80/tcp (v6)                ALLOW       Anywhere (v6)             
+443 (v6)                   ALLOW       Anywhere (v6)  
+```
+
+
 3. Certifique-se de ter **Docker** e **Docker Compose** instalados;
 4. Use os alvos do `Makefile` para subir os serviços desejados:
 5. Para ver se tem uma porta ocupada ( identificamos o PID da porta ) sudo lsof -i <protocolo>:<porta> `sudo lsof -i TCP:8080` ; Para liberar a porta faça um: `sudo kill -9 <PID>` ; 
