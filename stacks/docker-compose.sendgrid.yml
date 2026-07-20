@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   # The SendGrid Mock Server + Web UI
-  sendgrid-smtp-fabrica:
+  sendgrid:
     image: ykanazawa/sendgrid-maildev:latest
-    container_name: sendgrid-fsw
+    container_name: sendgrid
     hostname: sendgrid-maildev
     ports:
       - "3030:3030"  # Mock SendGrid API Server
@@ -15,3 +13,8 @@ services:
       - SENDGRID_FSW_API_KEY=SG.mock_key_for_dev_testing
       - SENDGRID_FSW_SMTP_SERVER=mail.suasflux.dev
       #- SENDGRID_FSW_SMTP_SERVER=127.0.0.1:1025
+      
+networks:
+    suasflux-network:
+        name: suasflux-network
+        driver: bridge

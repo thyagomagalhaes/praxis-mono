@@ -1,0 +1,37 @@
+{
+  "users": [{
+    "name": "admin",
+    "password": "3DfTB87hMzAy",
+    "tags": "administrator"
+  }, {
+    "name": "suasflux",
+    "password": "CXR6HP3u1njV",
+    "tags": ""
+  }, {
+    "name": "relatorio",
+    "password": "64LCWde5FDr8",
+    "tags": ""
+  }],
+  "vhosts": [{
+    "name": "/"
+  }],
+  "permissions": [{
+    "user": "admin",
+    "vhost": "/",
+    "configure": ".*",
+    "write": ".*",
+    "read": ".*"
+  }, {
+    "user": "suasflux",
+    "vhost": "/",
+    "configure": "",
+    "write": ".*",
+    "read": ""
+  }, {
+    "user": "relatorio",
+    "vhost": "/",
+    "configure": ".*",
+    "write": ".*",
+    "read": ".*"
+  }]
+}

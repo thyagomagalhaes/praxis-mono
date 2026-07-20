@@ -1,7 +1,7 @@
 services:
-  redis-cache-fabrica:
+  redis:
     image: redis:8.2
-    container_name: redis-fsw
+    container_name: redis
     deploy:
       resources:
         limits:
@@ -18,9 +18,9 @@ services:
     
     volumes:
 #     - ../redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
-      - redis_data_fsw:/data
+      - redis_data:/data
     networks:
-      - praxis-network
+      - suasflux-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -32,9 +32,9 @@ services:
 #    image: redis:8.2
 #    container_name: redis-hml
     
-  redisinsight-console:
+  redisinsight:
     image: redis/redisinsight:latest
-    container_name: redisinsight-cli
+    container_name: redisinsight
     deploy:
       resources:
         limits:
@@ -47,20 +47,21 @@ services:
     ports:
       - "${REDISINSIGHT_HOST}:${REDISINSIGHT_CONTAINER}"
     depends_on:
-      redis-cache-fabrica:
+      redis:
         condition: service_healthy
     volumes:
-      - redisinsight_data_client:/data
+      - redisinsight_data:/data
     networks:
-      - praxis-network
+      - suasflux-network
 #    environment:
 #      - RI_APP_FEATURES=browser,database_analysis,workbench
 #      - REDISINSIGHT_CONNECTIONS=[{"name":"Local Redis","host":"redis","port":6379,"username":"","password":"q52ma/BY7Z+4mJAucRLoQ/HiwbC3g3QGMOM1aj+twAqjZrPRhet2C6AguHtEVKvgnAIuqedC1kinDsaW"}]
       
 volumes:
-  redis_data_fsw:
-  redisinsight_data_client:
+  redis_data:
+  redisinsight_data:
   
 networks:
-  praxis-network:
-    name: praxis-network
+    suasflux-network:
+        name: suasflux-network
+        driver: bridge

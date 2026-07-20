@@ -1,0 +1,57 @@
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=senha
+    command: server /data --console-address ":8091" --address ":8090"
+    ports:
+      - "8090:8090" # API (S3)
+      - "8091:8091" # Console (UI)
+    volumes:
+      - minio_data:/data
+      - ../minio/certs:/root/.minio/certs:ro
+    networks:
+      - suasflux-network
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "-k", "https://localhost:8090/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  minio-console:
+    image: minio/mc:latest
+    container_name: minioconsole
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - suasflux-network
+    entrypoint: /bin/sh
+    command: |
+      -c
+      '
+        set -e
+        echo "Conectando ao MinIO (https://minio:8090)..."
+        /usr/bin/mc alias set local https://minio:8090 admin senha --insecure
+        echo "Alias 'local' configurado."
+
+        BUCKETS="relatorios-situacionais relatorios-acompanhamentos recibos-beneficios-eventuais"
+
+        for BUCKET in $$BUCKETS; do
+            echo "Criando bucket: $$BUCKET..."
+            /usr/bin/mc mb --insecure "local/$$BUCKET"
+        done
+        
+        echo "Setup do MinIO completo."
+      '
+volumes:
+    minio_data:
+
+networks:
+    suasflux-network:
+        name: suasflux-network
+        driver: bridge
+        

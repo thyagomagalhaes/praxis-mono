@@ -1,7 +1,7 @@
 services:
-  portainer-infra:
+  portainer:
     image: portainer/portainer-ce:lts
-    container_name: portainer-hub
+    container_name: portainer
     deploy:
       resources:
         limits:
@@ -15,19 +15,19 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data_infra:/data
+      - portainer_data:/data
     ports:
       - "${PORTAINER_HTTP_HOST}:${PORTAINER_HTTP_CONTAINER}"
       #- 8000:8000  # Remove if you do not intend to use Edge Agents
     networks:
-     - praxis-network
+     - suasflux-network
      
 volumes:
-  portainer_data_infra:
-    name: portainer_data_infra
+  portainer_data:
+    name: portainer_data
 
  
 networks:
-  praxis-network:
-    name: praxis-network
+  suasflux-network:
+    name: suasflux-network
     driver: bridge

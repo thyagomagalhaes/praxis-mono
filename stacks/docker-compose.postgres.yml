@@ -1,7 +1,7 @@
 services:
-    postgresql-sgbd-fabrica:
+    postgresql:
         image: postgres:17-alpine
-        container_name: postgresql-fsw
+        container_name: postgresql
         # Resource Limits Block
         deploy:
            resources:
@@ -18,11 +18,11 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PWD_FSW}
             POSTGRES_DB: ${POSTGRES_DB_FSW}
         volumes:
-            - postgres_data_fsw:/var/lib/postgresql
+            - postgres_data:/var/lib/postgresql
         ports:
             - "${POSTGRES_HOST_FSW}:${POSTGRES_CONTAINER_FSW}"
         networks:
-            - praxis-network
+            - suasflux-network
         restart: unless-stopped
         
         healthcheck:
@@ -34,9 +34,9 @@ services:
   # postgresql-sgbd-homolog:
   #     container_name: postgresql-hml
   
-    pgadmin-console:
+    pgadmin:
         image: dpage/pgadmin4:latest
-        container_name: pgadmin-cli
+        container_name: pgadmin
         deploy:
             resources:
               limits:
@@ -60,22 +60,22 @@ services:
             # Deixa explícito a porta em que o pgAdmin escuta dentro do contêiner.
             PGADMIN_LISTEN_PORT: ${PGADMIN_CONTAINER}
         volumes:
-            - pgadmin_data_client:/var/lib/pgadmin 
+            - pgadmin_data:/var/lib/pgadmin 
         ports:
             - "${PGADMIN_HOST}:${PGADMIN_CONTAINER}"
         networks:
-            - praxis-network
+            - suasflux-network
         restart: unless-stopped
         depends_on:
-            postgresql-sgbd-fabrica:
+            postgresql:
               condition: service_healthy
 
 volumes:
-    postgres_data_fsw:
-    pgadmin_data_client:
+    postgres_data:
+    pgadmin_data:
 
 networks:
-    praxis-network:
-        name: praxis-network
+    suasflux-network:
+        name: suasflux-network
         driver: bridge
 

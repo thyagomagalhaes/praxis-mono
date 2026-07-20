@@ -1,5 +1,5 @@
 services:
-  nginx-infra:
+  nginx:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-manager
     deploy:
@@ -26,10 +26,10 @@ services:
       TZ: "America/Recife"
       
     volumes: 
-      - nginx_proxy_data_infra:/data # Armazena as configurações dos seus proxies  
-      - nginx_ssl_data_infra:/etc/letsencrypt # Armazena os certificados SSL 
+      - nginx_proxy_data:/data # Armazena as configurações dos seus proxies  
+      - nginx_ssl_data:/etc/letsencrypt # Armazena os certificados SSL 
     networks:
-      - praxis-network
+      - suasflux-network
       
     healthcheck: 
       test: ["CMD", "/usr/bin/check-health"] 
@@ -39,13 +39,13 @@ services:
       start_period: 10s
 
 networks:
-  praxis-network:
-    name: praxis-network
+  suasflux-network:
+    name: suasflux-network
     driver: bridge
     
 volumes:
-    nginx_proxy_data_infra:
-    nginx_ssl_data_infra:
+    nginx_proxy_data:
+    nginx_ssl_data:
     # Armazena as configurações dos seus proxies
     # - ./data:/data
     # Armazena os certificados SSL

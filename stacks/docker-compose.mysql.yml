@@ -1,7 +1,7 @@
 services:
-  mysql-sgbd-fabrica:
-    image: mysql:9.7
-    container_name: mysql-fsw
+  mysql:
+    image: mysql:8.4   
+    container_name: mysql
     deploy:
       resources:
         limits:
@@ -18,13 +18,13 @@ services:
         MYSQL_USER: ${MYSQL_USER_FSW}
         MYSQL_PASSWORD: ${MYSQL_USER_PWD_FSW}
     volumes:
-        - mysql_data_fsw:/var/lib/mysql
+        - mysql_data:/var/lib/mysql
         # Optional: Uncomment below to automatically run initial SQL scripts on startup
       # - ./init-scripts:/docker-entrypoint-initdb.d
     ports:
         - "${MYSQL_HOST_FSW}:${MYSQL_CONTAINER_FSW}"
     networks:
-        - praxis-network
+        - suasflux-network
     restart: unless-stopped
     security_opt:
       - seccomp:unconfined
@@ -38,9 +38,9 @@ services:
  # mysql-sgbd-homolog:
  #   container_name: mysql-hml
  
-  phpmyadmin-console:
+  phpmyadmin:
     image: phpmyadmin:latest
-    container_name: phpmyadmin-cli
+    container_name: phpmyadmin
     deploy:
       resources:
         limits:
@@ -50,25 +50,25 @@ services:
           cpus: '0.25'
           memory: 256MB
     networks:
-      - praxis-network
+      - suasflux-network
     restart: unless-stopped
     ports:
       - "${PHPMYADMIN_HOST}:${PHPMYADMIN_CONTAINER}"
     env_file:
       - .env 
     environment:
-      PMA_HOST_FSW: mysql-fsw
+      PMA_HOST_FSW: mysql
       PMA_PORT_FSW: ${MYSQL_CONTAINER_FSW}
 #     PMA_HOST_HOMOLOG: db
 #     PMA_PORT_HOMOLOG: 
     depends_on:
-      mysql-sgbd-fabrica:
+      mysql:
         condition: service_healthy
 volumes:
-    mysql_data_fsw:
+    mysql_data:
 
 networks:
-    praxis-network:
-        name: praxis-network
+    suasflux-network:
+        name: suasflux-network
         driver: bridge
                 

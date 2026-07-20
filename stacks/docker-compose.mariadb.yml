@@ -1,0 +1,52 @@
+services:
+  mariadb:
+    image: mariadb:lts-alpine
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: senha_secreta_root
+      MARIADB_DATABASE: meu_banco
+      MARIADB_USER: meu_usuario
+      MARIADB_PASSWORD: senha_secreta_usuario
+    ports:
+      - "3306:3307"
+    networks:
+        - suasflux-network
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - "8686:8686"
+    networks:
+        - suasflux-network
+    environment:
+      ADMINER_DESIGN: "pappu687"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+volumes:
+  mariadb_data:
+  
+networks:
+    suasflux-network:
+        name: suasflux-network
+        driver: bridge
