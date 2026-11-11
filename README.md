@@ -35,12 +35,12 @@
 ## Estrutura do Projeto
 
 ```
-praxis-monolito/
+suasflux-monolito/
 ├── Procfile                    # Deploy Heroku/Render
 ├── pom.xml                     # Build Maven
 ├── src/
 │   └── main/
-│       ├── java/app/praxis/modulo/
+│       ├── java/app/suasflux/modulo/
 │       │   ├── federacao/      # Controllers REST, Controllers MVC (Thymeleaf), Entidades JPA, Repositórios Spring Data, Camada de serviços, DTOs de API de paises, estados e municípios
 │       └── resources/
 │           ├── application.properties
@@ -63,6 +63,17 @@ praxis-monolito/
 ├── HELP.md                     # Referências das tecnologias dos starters SPRING
 ├── README.md                   # Overview do projeto
 ```
+
+## Web MVC
+
+| Recurso | Endpoint base | Métodos disponíveis |
+|---|---|---|
+| Indivíduos | `/web/ingresso-individuo` | POST |
+| Indivíduos | `/web/lista-individuos` | GET |
+| Famílias | `/web/formar-familia` | POST |
+| Famílias | `/web/lista-familias` | GET |
+| Diário Acolhimento | `web/diario-acolhimento)` | GET |
+
 
 ## API REST
 
