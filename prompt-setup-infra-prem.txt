@@ -1,0 +1,53 @@
+Docker compose completo para arquitetura monolítica modular e/ou de microsserviços, multi-environment e que facilite o sobe / desce de operações de infraestrutura on-premise e que contenha:
+
+- Levar em consideração host que provisionará os serviços com as seguintes configurações: sistema operacional Linux Ubuntu 26.04 LTS de 64 bits, processador de no mínimo 4 núcleos baseado em AMD64 / x64 e 12GB de memória RAM. Docker já instalado;
+- Diretório onde ficarão os arquivos no caminho infra-prem;
+- Priorizar imagens Docker LTS e recentes;
+- Ambientes a serem criados: desenvolvimento ( fsw ), staging ( hml ), produção (prod) e o de shared services ( common );
+- Os ambientes de desenvolvimento ( fsw ), staging ( hml ), produção (prod) consomem os serviços do ambiente de shared services
+
+
+- A configuração de criação dos ambientes será:
+
+1º CRIAR AS REDES:
+
+AMBIENTE SHARED SERVICES ( common ): NETWORK: suasflux-prem-common;
+AMBIENTE DE DESENVOLVIMENTO ( fsw ): NETWORK: suasflux-prem-fsw;
+AMBIENTE DE STAGING ( hml ): NETWORK: suasflux-prem-hml;
+AMBIENTE DE PRODUÇÃO ( prod ): NETWORK: suasflux-prem-prod;
+
+2º CRIAR OS SERVIÇOS E ASSOCIÁ-LOS AOS AMBIENTES:
+
+A) AMBIENTE SHARED SERVICES ( common ):  
+
+PADRÃO DE NOME DOS CONTAINERS: nome-do-serviço-suasflux-prem-common
+
+SERVIÇOS A CONFIGURAR: SGBD's: Maria DB + Adminer; PHPMyAdmin; pgadmin; redisinsight; Mongo Express; Orquestração de containers: Portainer; Proxy Dinâmico: Nginx Proxy Manager ( NPM ) com base de dados configurada / conexão no MariaDb ( NPM depende do MariaDB); Tunelamento: Ngrok;
+
+B) AMBIENTE DE DESENVOLVIMENTO ( fsw ):  
+
+PADRÃO DE NOME DOS CONTAINERS: nome-do-serviço-suasflux-prem-fsw
+
+SERVIÇOS A CONFIGURAR: SGBD's: Mysql, PostgreSQL, Redis, MongoDB; Filas e Mensageria: RabbitMQ com interface gráfica, Apache KAFKA + Kafbat UI; Storage: Minio + MinIO Console; Email: Mailpit; ID Provider: Keycloak 26.6.4 com base de dados configurada / conexão no MySQL ( Keycloak depende do MySQL );
+
+
+C) AMBIENTE DE STAGING ( hml ):
+
+PADRÃO DE NOME DOS CONTAINERS: nome-do-serviço-suasflux-prem-hml
+
+SERVIÇOS A CONFIGURAR: SGBDs: Mysql, PostgreSQL, Redis, MongoDB; Filas e Mensageria: RabbitMQ com interface gráfica, Apache KAFKA + Kafbat UI; Keycloak 26.6.4 com base de dados configurada / conexão no MySQL ( Keycloak depende do MySQL ); Para cofre de senhas: Hashicorp Vault; Storage: Minio + Minio console; Email: Sendgrid Web API;  
+
+D) AMBIENTE DE PRODUÇÃO ( prod ):
+
+PADRÃO DE NOME DOS CONTAINERS: nome-do-serviço-suasflux-prem-prod
+
+SERVIÇOS A CONFIGURAR: SGBDs: Mysql, PostgreSQL, Redis, MongoDB; Filas e Mensageria: RabbitMQ com interface gráfica, Apache KAFKA + Kafbat UI; Keycloak 26.6.4 com base de dados configurada / conexão no MySQL ( Keycloak depende do MySQL ); Para cofre de senhas: Hashicorp Vault; Storage: Minio + Minio console; Email: Sendgrid Web API;
+
+Outras considerações:
+
+- Manter o mesmo número das portas dos serviços independente do ambiente;  
+- Cada ambiente terá um arquivo docker compose separado, com variáveis em arquivo .env, configurações de health check e deploy resource; e separado pelos ambientes criados de shared services ( common ); desenvolvimento ( fsw ), staging ( hml ) e produção ( prod );
+- Os serviços que pedirem timezone; configurar: TZ=America/Recife;
+- Um arquivo makefile para padronizar e simplificar o sobe / desce dos serviços;                
+- Um arquivo READ.md na raiz do diretório principal contendo a explicação do setup realizado e desenho arquitetural ( imagem e texto explicativo ) das soluções implementadas;
+- No final quero que a árvore completa do diretório seja compactada e seja disponibilizado link para o download do arquivo compresso / compactado.

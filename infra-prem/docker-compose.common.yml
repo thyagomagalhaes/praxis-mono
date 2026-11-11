@@ -1,0 +1,208 @@
+# ============================================================
+# SUAFLUX PREM - SHARED SERVICES (COMMON)
+# Ambiente de serviços compartilhados
+# Host: Ubuntu 26.04 LTS | 4 cores | 12GB RAM
+# ============================================================
+
+name: suasflux-prem-common
+
+services:
+  # --------------------------------------------------
+  # MARIADB 11.4 LTS
+  # --------------------------------------------------
+  mariadb-rds-nginx:
+    image: mariadb:11.4
+    container_name: mariadb-rds-nginx-suasflux-prem-common
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-npm_db}
+      MARIADB_USER: ${MARIADB_USER:-npm_user}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    command:
+      - --innodb-buffer-pool-size=64M
+      - --max-connections=20
+      - --key-buffer-size=8M
+    ports:
+      - "${MARIADB_PORT:-3307}:3306"
+    volumes:
+      - mariadb_rds_nginx_data:/var/lib/mysql
+    networks:
+      - suasflux-prem-common
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 384M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+
+  # --------------------------------------------------
+  # ADMINER
+  # --------------------------------------------------
+  adminer:
+    image: adminer:latest
+    container_name: adminer-suasflux-prem-common
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+    ports:
+      - "${ADMINER_PORT:-8082}:8080"
+    networks:
+      - suasflux-prem-common
+    depends_on:
+      mariadb-rds-nginx:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+
+
+  # --------------------------------------------------
+  # PORTAINER CE
+  # --------------------------------------------------
+  portainer-orchestrator:
+    image: portainer/portainer-ce:2.27.0
+    container_name: portainer-orchestrator-suasflux-prem-common
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+    ports:
+      - "${PORTAINER_HTTP_PORT:-9002}:9000"
+      - "${PORTAINER_HTTPS_PORT:-9443}:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_orchestrator_data:/data
+    networks:
+      - suasflux-prem-common
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.10'
+          memory: 256M
+
+  # --------------------------------------------------
+  # NGINX PROXY MANAGER
+  # NOTA: A imagem oficial jc21 utiliza SQLite interno.
+  #       Não há suporte nativo a MariaDB/MySQL.
+  # --------------------------------------------------
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:2.15.1
+    container_name: nginx-proxy-manager-suasflux-prem-common
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+       # Mysql/Maria connection parameters:
+      DB_MARIADB_HOST: mariadb.rds.nginx
+      DB_MARIADB_PORT: 3306
+      DB_MARIADB_USER: ${MARIADB_USER:-npm_user}
+      DB_MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      DB_MARIADB_NAME: ${MARIADB_DATABASE:-npm_db}
+      # Desativa métricas desnecessárias em dev para economizar I/O e CPU
+      DISABLE_HTTP2: "false"
+      # Otimização de Node.js para limitar o uso de memória da API
+      NODE_OPTIONS: "--max-old-space-size=256"
+      # Optional SSL (see section below)
+      # DB_MYSQL_SSL: 'true'
+      # DB_MYSQL_SSL_REJECT_UNAUTHORIZED: 'true'
+      # DB_MYSQL_SSL_VERIFY_IDENTITY: 'true'
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    ports:
+      - "${NPM_HTTP_PORT:-80}:80"
+      - "${NPM_HTTPS_PORT:-443}:443"
+      - "${NPM_ADMIN_PORT:-81}:81"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    depends_on:
+      mariadb-rds-nginx:
+        condition: service_healthy
+    networks:
+      - suasflux-prem-common
+      - suasflux-prem-fsw
+      - suasflux-prem-hml
+      - suasflux-prem-prod
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11000/api/ || exit 1"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # --------------------------------------------------
+  # NGROK
+  # --------------------------------------------------
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok-suasflux-prem-common
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "${NGROK_PORT:-4040}:4040"
+    command: ["http", "nginx-proxy-manager:80", "--region", "${NGROK_REGION:-sa}"]
+    networks:
+      - suasflux-prem-common
+    depends_on:
+      - nginx-proxy-manager
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+
+volumes:
+  mariadb_rds_nginx_data:
+    name: suasflux-prem-common-mariadb-rds-nginx-data
+  portainer_orchestrator_data:
+    name: suasflux-prem-common-portainer-orchestrator-data
+  npm_data:
+    name: suasflux-prem-common-npm-data
+  npm_letsencrypt:
+    name: suasflux-prem-common-npm-letsencrypt
+
+networks:
+  suasflux-prem-common:
+    name: suasflux-prem-common
+    driver: bridge
+  suasflux-prem-fsw:
+    name: suasflux-prem-fsw
+    driver: bridge
+    external: true
+  suasflux-prem-hml:
+    name: suasflux-prem-hml
+    driver: bridge
+    external: true
+  suasflux-prem-prod:
+    name: suasflux-prem-prod
+    driver: bridge
+    external: true

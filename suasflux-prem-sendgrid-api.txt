@@ -1,0 +1,11 @@
+Name: suasflux-prem-fsw-sendgrid-api
+API Key ID: rI-EuB4QTY6wrATMbfpjoA
+Senha: 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
+
+Name: suasflux-prem-hml-sendgrid-api 
+API Key ID: 9ttPioTuTieu3XTjzpfKCA
+Senha: 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
+
+Name: suasflux-prem-prod-sendgrid-api 
+API Key ID: jbDUrQZBSPGEcVMuhGWfmg
+Senha: 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

@@ -9,9 +9,12 @@
     - Mysql + PhpMyAdmin
     - MariaDB + Adminer
     - Redis + Redis Insight
+    - MongoDB + Mongo Express
+    - OpenSearch
     - RabbitMQ
+    - Kafka
     - Minio API + Minio Console
-    - Sendgrid
+    - Mailpit / Sendgrid
     - Keycloak
     - Vault
     
@@ -52,23 +55,26 @@ Principais papéis:
 ```bash
 # Virtual hosts
 
-127.0.0.1 nginx
-127.0.0.1 suasflux.prem
-127.0.0.1 nginx.suasflux.prem  ngrok.suasflux.prem
-127.0.0.1 keycloak.suasflux.prem portainer.suasflux.prem
-127.0.0.1 www.catorecomeco.dev www.catorecomeco.hml
-127.0.0.1 mail.suasflux.dev mail.suasflux.hml
-127.0.0.1 adminer.suasflux.prem minio.suasflux.prem pgadmin.suasflux.prem rabbitmq.suasflux.prem redisinsight.suasflux.prem phpmyadmin.suasflux.prem vault.suasflux.prem
+127.0.0.1 localhost
+127.0.0.1 nginx.suasflux.prem ngrok.suasflux.prem portainer.suasflux.prem adminer.suasflux.prem
+127.0.0.1 phpmyadmin.suasflux.dev pgadmin.suasflux.dev redisinsight.suasflux.dev mongoexpress.suasflux.dev
+127.0.0.1 minioconsole.suasflux.dev mailpit.suasflux.dev rabbitmq-ui.suasflux.dev kafbat-ui.suasflux.dev
+127.0.0.1 opensearch-dashboard.suasflux.dev
+127.0.0.1 www.catorecomeco.dev
 
 # Virtual hosts with custom locations
-# Realms keycloak
 
-127.0.0.1 sso.suasflux.dev sso.suasflux.hml
+127.0.0.1 sso.suasflux.dev
 
 # Streams
 
-127.0.0.1 mariadb.dev minio.dev mysql.dev postgresql.dev rabbitmq.dev redis.dev sendgrid.dev
-127.0.0.1 mariadb.hml minio.hml mysql.hml postgresql.hml rabbitmq.hml redis.hml sendgrid.hml
+127.0.0.1 mariadb-rds-nginx-common.suasflux.prem
+127.0.0.1 mysql-rds-keycloak-fsw.suasflux.dev
+127.0.0.1 postgresql-rds-monolito-fsw.suasflux.dev
+127.0.0.1 redis-cache-monolito-fsw.suasflux.dev mongodb-document-monolito-fsw.suasflux.dev
+127.0.0.1 rabbitmq-messagebroker-monolito-fsw.suasflux.dev kafka-eventstreaming-monolito-fsw.suasflux.dev
+127.0.0.1 minio-storage-monolito-fsw.suasflux.dev mailpit-smtp-monolito-fsw.suasflux.dev
+127.0.0.1 opensearch-searchengine-monolito-fsw.suasflux.dev
 ```
 
 2. Certifique-se de ter o **Certbot** instalado. Configure os domínios `HTTPS` no **NGINX**;
