@@ -68,10 +68,12 @@ suasflux-monolito/
 
 | Recurso | Endpoint base | Métodos disponíveis |
 |---|---|---|
-| Indivíduos | `/web/ingresso-individuo` | POST |
+| Indivíduos | `/web/cadastro-individuo` | POST |
 | Indivíduos | `/web/lista-individuos` | GET |
 | Famílias | `/web/formar-familia` | POST |
+| Famílias | `/web/acolher-familia` | POST |
 | Famílias | `/web/lista-familias` | GET |
+| Painel / Dashboard / Stats / Observabilidade / Monitoramento | `web/painel)` | GET |
 | Diário Acolhimento | `web/diario-acolhimento)` | GET |
 
 
