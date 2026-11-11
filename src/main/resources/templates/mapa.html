@@ -1,0 +1,83 @@
+<!-- View Front-End com Leaflet.js e OpenStreetMap -->
+<!-- O arquivo Thymeleaf carrega o mapa interativo, renderiza os polígonos dos bairros, o raio circular de atendimento e as rotas.-->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${tituloPage}">Geoprocessamento GIS</title>
+    
+    <!-- CSS Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 650px; width: 100%; border-radius: 8px; }
+        .info-panel { padding: 10px; background: white; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="info-panel">
+    <h2 th:text="${tituloPage}"></h2>
+    <p>Visualização de Polígonos de Bairro, Raios de Atuação e Linhas de Rota.</p>
+</div>
+
+<!-- Container do Mapa OpenStreetMap -->
+<div id="map"></div>
+
+<!-- JS Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // 1. Inicializa o Mapa centralizado
+    const initialLat = -8.0476;
+    const initialLng = -34.8770;
+    const map = L.map('map').setView([initialLat, initialLng], 14);
+
+    // 2. Adiciona a Camada de Tiles do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3. Busca os Dados Geográficos da API Spring Boot
+    fetch('/api/geo/coordenadas-exemplo')
+        .then(response => response.json())
+        .then(data => {
+            
+            // A. Ponto da Localidade Central (Marcador)
+            const centro = data.centro;
+            const marker = L.marker(centro).addTo(map)
+                .bindPopup('<b>Sede do Serviço</b><br>Ponto de Origem Central.').openPopup();
+
+            // B. Raio de Atuação (Buffer Circular de Atendimento)
+            const circle = L.circle(centro, {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.2,
+                radius: data.raioMetros
+            }).addTo(map).bindPopup(`Raio de Cobertura: ${data.raioMetros}m`);
+
+            // C. Polígono do Bairro / Área de Comunidade
+            const polygonCoords = data.bairroPoligono;
+            const polygon = L.polygon(polygonCoords, {
+                color: 'blue',
+                fillColor: '#30f',
+                fillOpacity: 0.3
+            }).addTo(map).bindPopup('<b>Bairro / Comunidade</b><br>Área delimitada.');
+
+            // D. Rota em Linha Reta
+            const lineCoords = data.linhaReta;
+            const polyline = L.polyline(lineCoords, {
+                color: 'green',
+                weight: 4,
+                dashArray: '5, 10' // Linha tracejada
+            }).addTo(map).bindPopup('Rota Direta (Linha Reta)');
+
+            // Ajusta o zoom para enquadrar todos os elementos
+            const group = new L.featureGroup([marker, circle, polygon, polyline]);
+            map.fitBounds(group.getBounds());
+        });
+</script>
+
+</body>
+</html>

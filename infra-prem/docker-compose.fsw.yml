@@ -1,0 +1,837 @@
+# ============================================================
+# SUAFLUX PREM - DESENVOLVIMENTO (FSW)
+# Ambiente de desenvolvimento full-stack
+# Host: Ubuntu 26.04 LTS | 4 cores | 12GB RAM
+# ============================================================
+
+name: suasflux-prem-fsw
+
+services:
+  # --------------------------------------------------
+  # MYSQL 8.0
+  # --------------------------------------------------
+  mysql-rds-keycloak:
+    image: mysql:8.0
+    container_name: mysql-rds-keycloak-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-keycloak_db}
+      MYSQL_USER: ${MYSQL_USER:-keycloak_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # performance-schema=OFF: Economiza sozinhos entre 100MB e 200MB de RAM.
+    # innodb-buffer-pool-size=128M: Limita o consumo de cache de tabelas InnoDB.
+    # max-connections=50: O Keycloak utiliza um pool de conexões pequeno por padrão 
+    # em dev, não sendo necessário o limite padrão de 151 conexões.
+    command: >
+      --innodb-buffer-pool-size=128M
+      --max-connections=50
+      --performance-schema=OFF
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_keycloak_data:/var/lib/mysql
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 512M
+        reservations:
+          cpus: '0.10'
+          memory: 256M
+  # --------------------------------------------------
+  # PHPMYADMIN
+  # --------------------------------------------------
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      PMA_HOST: mysql-rds-keycloak
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${PHPMYADMIN_PORT:-8083}:80"
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      mysql-rds-keycloak:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+
+  # --------------------------------------------------
+  # POSTGRESQL 18 E POSTGIS 18.3.6 - simplificados para os ambiente dev
+  # --------------------------------------------------
+  # Banco de Dados Espacial
+  postgis-rds-msfederacao:
+    image: postgis/postgis:18-3.6-alpine
+    container_name: postgis-rds-msfederacao-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MSFEDERACAO_DB:-db_msfederacao}
+    command: >
+      postgres 
+      -c shared_buffers=32MB 
+      -c max_connections=20 
+      -c work_mem=4MB 
+      -c maintenance_work_mem=16MB
+    ports:
+      #- "${POSTGRES_PORT:-5431}:5432"
+      - "${POSTGRES_MSFEDERACAO_PORT}:5432"
+    volumes:
+      - postgis_msfederacao_data:/var/lib/postgresql
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-db_msfederacao}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+
+  postgis-rds-msterritorializacao:
+    image: postgis/postgis:18-3.6-alpine
+    container_name: postgis-rds-msterritorializacao-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MSTERRITORIALIZACAO_DB:-db_msterritorializacao}
+    command: >
+      postgres 
+      -c shared_buffers=32MB 
+      -c max_connections=20 
+      -c work_mem=4MB 
+      -c maintenance_work_mem=16MB
+    ports:
+      - "${POSTGRES_MSTERRITORIALIZACAO_PORT}:5432"
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      - postgis_msterritorializacao_data:/var/lib/postgresql
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-db_msterritorializacao}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+
+
+  # Servidores de Vector Tiles (Consumido pelo Thymeleaf/Leaflet).
+  postgis-tileserv-msfederacao:
+    image: pramsey/pg_tileserv:latest
+    container_name: postgis-tileserv-msfederacao-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgis-rds-msfederacao:5432/${POSTGRES_MSFEDERACAO_DB:-db_msfederacao}"
+      PGT_HTTPPORT: "7800"
+      PGT_DBPOOLSIZE: "10"
+      PGLOG_LEVEL: "info"
+    ports:
+      - "${PG_TILESERV_MSFEDERACAO_PORT:-7800}:7800"
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      postgis-rds-msfederacao:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+        reservations:
+          cpus: '0.02'
+          memory: 32M
+
+  postgis-tileserv-msterritorializacao:
+    image: pramsey/pg_tileserv:latest
+    container_name: postgis-tileserv-msterritorializacao-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgis-rds-msterritorializacao:5432/${POSTGRES_MSTERRITORIALIZACAO_DB:-db_msterritorializacao}"
+      PGT_HTTPPORT: "7800"
+      PGT_DBPOOLSIZE: "10"
+      PGLOG_LEVEL: "info"
+    ports:
+      - "${PG_TILESERV_MSTERRITORIALIZACAO_PORT:-7801}:7800"
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      postgis-rds-msterritorializacao:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+        reservations:
+          cpus: '0.02'
+          memory: 32M
+
+
+  postgres-rds-mspublico:
+    image: postgres:18-alpine
+    container_name: postgres-rds-mspublico-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MSPUBLICO_DB:-db_mspublico}
+    command: >
+      postgres 
+      -c shared_buffers=32MB 
+      -c max_connections=20 
+      -c work_mem=4MB 
+      -c maintenance_work_mem=16MB
+    ports:
+      - "${POSTGRES_MSPUBLICO_PORT}:5432"
+    volumes:
+      - postgres_mspublico_data:/var/lib/postgresql
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-db_mspublico}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+  
+  postgres-rds-msacolhimento:
+    image: postgres:18-alpine
+    container_name: postgres-rds-msacolhimento-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MSACOLHIMENTO_DB:-db_msacolhimento}
+    command: >
+      postgres 
+      -c shared_buffers=32MB 
+      -c max_connections=20 
+      -c work_mem=4MB 
+      -c maintenance_work_mem=16MB
+    ports:
+      - "${POSTGRES_MSACOLHIMENTO_PORT}:5432"
+    volumes:
+      - postgres_msacolhimento_data:/var/lib/postgresql
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-db_msacolhimento}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+  
+  postgres-rds-msatendimento:
+    image: postgres:18-alpine
+    container_name: postgres-rds-msatendimento-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_MSATENDIMENTO_DB:-db_msatendimento}
+    command: >
+      postgres 
+      -c shared_buffers=32MB 
+      -c max_connections=20 
+      -c work_mem=4MB 
+      -c maintenance_work_mem=16MB
+    ports:
+      - "${POSTGRES_MSATENDIMENTO_PORT}:5432"
+    volumes:
+      - postgres_msatendimento_data:/var/lib/postgresql
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-db_msatendimento}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+  
+  
+
+  #--------------------------------------------------
+  # PGADMIN 4
+  # --------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-suasnapraxis@gmail.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    # Adicione um delay fixo se houver carga de scripts pesada na subida dos bancos
+    # Delay aplicado sobrescrevendo o command em vez do entrypoint
+    command: ["/bin/sh", "-c", "sleep 10 && exec /entrypoint.sh pgadmin4"]
+    ports:
+      - "${PGADMIN_PORT:-8084}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      postgis-rds-msfederacao:
+        condition: service_healthy
+      postgis-rds-msterritorializacao:
+        condition: service_healthy
+      postgres-rds-mspublico:
+        condition: service_healthy
+      postgres-rds-msacolhimento:
+        condition: service_healthy
+      postgres-rds-msatendimento:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 256M
+        reservations:
+          cpus: '0.05'
+          memory: 128M
+
+  # --------------------------------------------------
+  # REDIS 7.4
+  # --------------------------------------------------
+  redis:
+    image: redis:7.4
+    container_name: redis-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+  # --------------------------------------------------
+  # REDISINSIGHT
+  # --------------------------------------------------
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+    ports:
+      - "${REDISINSIGHT_PORT:-8085}:5540"
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        reservations:
+          cpus: '0.10'
+          memory: 256M
+
+  # --------------------------------------------------
+  # MONGODB 7.0
+  # --------------------------------------------------
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: echo 'db.runCommand({ping 1}).ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1.5G
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+  
+   # --------------------------------------------------
+  # MONGO EXPRESS
+  # --------------------------------------------------
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_CONFIG_MONGODB_ADMINUSERNAME:-admin}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_CONFIG_MONGODB_ADMINPASSWORD}
+      #ME_CONFIG_MONGODB_URL: ${ME_CONFIG_MONGODB_URL}
+      ME_CONFIG_MONGODB_SERVER: ${ME_CONFIG_MONGODB_SERVER}
+      ME_CONFIG_MONGODB_PORT: ${ME_CONFIG_MONGODB_PORT}
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME:-admin}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD} 
+    ports:
+      - "${MONGO_EXPRESS_PORT:-8086}:8081"
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+
+  # --------------------------------------------------
+  # OPENSEARCH
+  # --------------------------------------------------
+
+  opensearch:
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION}
+    container_name: opensearch-node-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      - cluster.name=opensearch-dev-cluster
+      - node.name=opensearch-node1
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=${OPENSEARCH_JAVA_OPTS}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      # Habilita SSL e Segurança (Autenticação Básica)
+      - plugins.security.disabled=false
+      - plugins.security.ssl.http.enabled=true
+      # Desativa verificação estrita de performance para dev
+      - DISABLE_INSTALL_SETTING_CHECKS=true
+      - DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: ${OPENSEARCH_MEM_LIMIT}
+        reservations:
+          memory: 1g
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k -s -u admin:${OPENSEARCH_INITIAL_ADMIN_PASSWORD} https://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+    networks:
+      - suasflux-prem-fsw
+
+  # --------------------------------------------------
+  # OPENSEARCH DASHBOARDS
+  # --------------------------------------------------
+
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:${OPENSEARCH_VERSION}
+    container_name: opensearch-dashboards-suasflux-prem-fsw
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - OPENSEARCH_HOSTS=["https://opensearch:9200"]
+      - OPENSEARCH_USERNAME=admin
+      - OPENSEARCH_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      # Configuração para aceitar os certificados autoassinados do OpenSearch
+      - OPENSEARCH_SSL_VERIFICATIONMODE=none
+    deploy:
+      resources:
+        limits:
+          memory: ${DASHBOARDS_MEM_LIMIT}
+        reservations:
+          memory: 512m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k http://localhost:5601/api/status | grep -q '\"state\":\"green\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    networks:
+      - suasflux-prem-fsw
+
+
+  # --------------------------------------------------
+  # RABBITMQ 4.3 (com Management Plugin)
+  # --------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:4.3.4-management
+    container_name: rabbitmq-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # --------------------------------------------------
+  # APACHE KAFKA 3.9 (KRaft mode - sem Zookeeper)
+  # --------------------------------------------------
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: kafka-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-Mk3OEYBSD34fcwNTJENDM2Qk}
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+      - "${KAFKA_CONTROLLER_PORT:-9093}:9093"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+      # CORREÇÃO: Usando o caminho absoluto do script executável da imagem Apache
+      test: ["CMD", "/opt/kafka/bin/kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1.5G
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+
+  # --------------------------------------------------
+  # KAFBAT UI
+  # --------------------------------------------------
+  kafbat-ui:
+    image: kafbat/kafka-ui:latest
+    container_name: kafbat-ui-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      KAFKA_CLUSTERS_0_NAME: suasflux-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    ports:
+      - "${KAFBAT_UI_PORT:-8081}:8080"
+    networks:
+      - suasflux-prem-fsw
+    depends_on:
+      kafka:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # --------------------------------------------------
+  # MINIO + CONSOLE
+  # --------------------------------------------------
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # Evita erros de redirecionamento HTTPS/HTTP no navegador:
+      MINIO_BROWSER_REDIRECT_URL: "http://localhost:${MINIO_CONSOLE_PORT:-9001}"
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - suasflux-prem-fsw
+    healthcheck:
+       # Usa a ferramenta nativa do MinIO em vez do curl
+      test: ["CMD-SHELL", "minio server health check http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  # --------------------------------------------------
+  # MAILPIT
+  # --------------------------------------------------
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    ports:
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_WEB_PORT:-8025}:8025"
+    volumes:
+      - mailpit_data:/data
+    networks:
+      - suasflux-prem-fsw
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+  
+  # --------------------------------------------------
+  # Wiremock da API da Twillio para disparo de SMS e WhatsApp
+  # --------------------------------------------------
+  wiremock-twillio:
+    image: wiremock/wiremock:3.9.1-alpine
+    container_name: wiremock-twillio-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-America/Recife}
+      # Limita o uso de Heap da JVM no Java para poupar RAM do host
+      - JAVA_OPTS=-Xms32m -Xmx128m -XX:+UseSerialGC
+    ports:
+      - "${WIREMOCK_WEB_PORT:-8180}:8080"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+      - ./wiremock/__files:/home/wiremock/__files
+    networks:
+      - suasflux-prem-fsw
+    command:
+      - --global-response-templating
+      - --disable-request-logging
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 192M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    
+  # --------------------------------------------------
+  # KEYCLOAK 26.2.4 (modo dev)
+  # NOTA: Versão 26.6.4 solicitada não existe.
+  #       Usando 26.2.4 (última estável disponível).
+  # --------------------------------------------------
+  keycloak-iam-auth:
+    image: quay.io/keycloak/keycloak:26.2.4
+    container_name: keycloak-iam-auth-suasflux-prem-fsw
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Recife}
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://mysql-rds-keycloak:3306/${KEYCLOAK_DB:-keycloak_db}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USERNAME:-keycloak_user}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+    ports:
+      - "${KEYCLOAK_PORT:-8080}:8080"
+    command: ["start-dev", "--hostname-strict=false", "--http-enabled=true"]
+    networks:
+      - suasflux-prem-fsw
+      - suasflux-prem-common
+    depends_on:
+      mysql-rds-keycloak:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1.5G
+        reservations:
+          cpus: '0.50'
+          memory: 512M
+
+volumes:
+  pgadmin_data:
+    name: suasflux-prem-fsw-pgadmin-data
+  redisinsight_data:
+    name: suasflux-prem-fsw-redisinsight-data
+  mysql_keycloak_data:
+    name: suasflux-prem-fsw-mysql-keycloak-data
+  postgis_msfederacao_data:
+    name: suasflux-prem-fsw-postgis-msfederacao-data
+  postgis_msterritorializacao_data:
+    name: suasflux-prem-fsw-postgis-msterritorializacao-data
+  postgres_mspublico_data:
+    name: suasflux-prem-fsw-postgres-mspublico-data
+  postgres_msacolhimento_data:
+    name: suasflux-prem-fsw-postgres-msacolhimento-data
+  postgres_msatendimento_data:
+    name: suasflux-prem-fsw-postgres-msatendimento-data
+  redis_data:
+    name: suasflux-prem-fsw-redis-data
+  mongodb_data:
+    name: suasflux-prem-fsw-mongodb-data
+  rabbitmq_data:
+    name: suasflux-prem-fsw-rabbitmq-data
+  kafka_data:
+    name: suasflux-prem-fsw-kafka-data
+  minio_data:
+    name: suasflux-prem-fsw-minio-data
+  mailpit_data:
+    name: suasflux-prem-fsw-mailpit-data
+
+networks:
+  suasflux-prem-fsw:
+    name: suasflux-prem-fsw
+    driver: bridge
+  suasflux-prem-common:
+    name: suasflux-prem-common
+    driver: bridge
+    external: true

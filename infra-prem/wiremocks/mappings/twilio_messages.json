@@ -1,0 +1,32 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/2010-04-01/Accounts/.*/Messages.json"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "sid": "SM1234567890abcdef1234567890abcdef",
+      "date_created": "Fri, 28 Aug 2026 12:00:00 +0000",
+      "date_updated": "Fri, 28 Aug 2026 12:00:00 +0000",
+      "date_sent": null,
+      "account_sid": "AC1234567890abcdef1234567890abcdef",
+      "to": "{{jsonPath request.body '$.To'}}",
+      "from": "{{jsonPath request.body '$.From'}}",
+      "body": "{{jsonPath request.body '$.Body'}}",
+      "status": "queued",
+      "num_segments": "1",
+      "num_media": "0",
+      "direction": "outbound-api",
+      "api_version": "2010-04-01",
+      "price": null,
+      "price_unit": "USD",
+      "error_code": null,
+      "error_message": null,
+      "uri": "/2010-04-01/Accounts/AC1234567890abcdef1234567890abcdef/Messages/SM1234567890abcdef1234567890abcdef.json"
+    }
+  }
+}
