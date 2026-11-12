@@ -1,4 +1,4 @@
-package app.suasflux.modulo.acompanhamento;
+package app.suasflux.modulo.reconstrucao;
 
 public class EquipamentoMediaRestController {
 
