@@ -1,4 +1,4 @@
-package app.suasflux.modulo.diagnostico.internal.domain;
+package app.suasflux.modulo.prevencao.internal.domain;
 
 import lombok.Getter;
 

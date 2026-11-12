@@ -1,4 +1,4 @@
-package app.suasflux.modulo.diagnostico;
+package app.suasflux.modulo.prevencao;
 
 public class EquipamentoBasicaRestController {
 

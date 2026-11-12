@@ -1,4 +1,4 @@
-package app.suasflux.modulo.acompanhamento.internal.domain;
+package app.suasflux.modulo.reconstrucao.internal.domain;
 
 
 import lombok.Getter;
