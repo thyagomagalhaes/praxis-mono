@@ -72,6 +72,31 @@ CREATE TABLE db_msterritorializacao.tb_municipio (
 CREATE INDEX ix_tb_municipio_co_uf ON db_msterritorializacao.tb_municipio (co_uf);
 CREATE INDEX ix_tb_municipio_geom  ON db_msterritorializacao.tb_municipio USING gist (geom);
 
+
+CREATE TABLE db_msterritorializacao.tb_bairro (
+    co_bairro               bigint        PRIMARY KEY,
+    no_bairro               text          NOT NULL,
+    co_municipio            integer       NOT NULL,
+    co_distrito             bigint,
+    no_distrito             text,
+    co_subdistrito          bigint,
+    no_subdistrito          text,
+    co_concentracao_urbana  text,
+    no_concentracao_urbana  text,
+    nu_area_km2             numeric(14,4),
+    geom                    geometry(MultiPolygon, 4326),
+    no_fonte_geom           text,
+    dt_carga                timestamptz   NOT NULL DEFAULT now(),
+
+    CONSTRAINT ck_tb_bairro_co_municipio CHECK (co_bairro / 1000 = co_municipio),
+    CONSTRAINT fk_tb_bairro_tb_municipio FOREIGN KEY (co_municipio)
+        REFERENCES db_msterritorializacao.tb_municipio (co_municipio)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE INDEX ix_tb_bairro_co_municipio ON db_msterritorializacao.tb_bairro (co_municipio);
+CREATE INDEX ix_tb_bairro_geom         ON db_msterritorializacao.tb_bairro USING gist (geom);
+
 2 - ALTERA  tb_pais: 
 
 -- Renomeia as colunas
@@ -121,25 +146,72 @@ COMMIT;
 
 4 - Altera a tb_municipio
 
-2 - Me informe os códigos em sql que altera os nome dos seguintes campos, atualiza as chaves estrangeiras e atualiza os índices na tabela tb_municipio:
+BEGIN;
 
-co_municipio para codigo_municipio_ibge
-no_municipio para nome_municipio_ibge
-co_uf para codigo_estado_ibge
-co_microrregiao para codigo_microrregiao_ibge
-no_microrregiao para nome_microrregiao_ibge
-co_mesorregiao para codigo_mesorregiao_ibge
-no_mesorregiao para nome_mesorregiao_ibge
-co_regiao_imediata para codigo_regiao_imediata_ibge
-no_regiao_imediata para nome_regiao_imediata_ibge
-co_regiao_intermediaria para codigo_regiao_intermediaria_ibge
-no_regiao_intermediaria para nome_regiao_intermediaria_ibge
-geom para geometria_municipio
-no_fonte_geom para origem_geometria_municipio
-dt_carga para data_carga_pipeline_etl_municipio
+-- 1) Colunas de tb_municipio
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN co_municipio TO codigo_municipio_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN no_municipio TO nome_municipio_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN co_uf TO codigo_estado_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN co_microrregiao TO codigo_microrregiao_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN no_microrregiao TO nome_microrregiao_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN co_mesorregiao TO codigo_mesorregiao_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN no_mesorregiao TO nome_mesorregiao_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN co_regiao_imediata TO codigo_regiao_imediata_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN no_regiao_imediata TO nome_regiao_imediata_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN co_regiao_intermediaria TO codigo_regiao_intermediaria_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN no_regiao_intermediaria TO nome_regiao_intermediaria_ibge;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN geom TO geometria_municipio;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN no_fonte_geom TO origem_geometria_municipio;
+ALTER TABLE db_msterritorializacao.tb_municipio RENAME COLUMN dt_carga TO data_carga_pipeline_etl_municipio;
+
+-- 2) Índices
+ALTER INDEX db_msterritorializacao.ix_tb_municipio_co_uf RENAME TO ix_tb_municipio_codigo_estado_ibge;
+ALTER INDEX db_msterritorializacao.ix_tb_municipio_geom  RENAME TO ix_tb_municipio_geometria_municipio;
+
+-- 3) Constraint CHECK (o nome ainda cita a coluna antiga)
+ALTER TABLE db_msterritorializacao.tb_municipio
+  RENAME CONSTRAINT ck_tb_municipio_co_uf TO ck_tb_municipio_codigo_estado_ibge;
+
+COMMIT;
 
 
-Atualize também a FK em tb_municipio que referencia tb_estado
+4 - Altera a tb_bairro
+
+
+BEGIN;
+
+-- 1) Colunas de tb_bairro
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN co_bairro              TO codigo_bairro_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN no_bairro              TO nome_bairro_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN co_municipio           TO codigo_municipio_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN co_distrito            TO codigo_distrito_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN no_distrito            TO nome_distrito_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN co_subdistrito         TO codigo_subdistrito_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN no_subdistrito         TO nome_subdistrito_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN co_concentracao_urbana TO codigo_concentracao_urbana_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN no_concentracao_urbana TO nome_concentracao_urbana_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN nu_area_km2            TO area_km2_ibge;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN geom                   TO geometria_bairro;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN no_fonte_geom          TO origem_geometria_bairro;
+ALTER TABLE db_msterritorializacao.tb_bairro RENAME COLUMN dt_carga               TO data_carga_pipeline_etl_bairro;
+
+-- 2) Índices
+ALTER INDEX db_msterritorializacao.ix_tb_bairro_co_municipio RENAME TO ix_tb_bairro_codigo_municipio_ibge;
+ALTER INDEX db_msterritorializacao.ix_tb_bairro_geom         RENAME TO ix_tb_bairro_geometria_bairro;
+
+-- 3) Constraint CHECK (o nome ainda cita a coluna antiga)
+ALTER TABLE db_msterritorializacao.tb_bairro
+  RENAME CONSTRAINT ck_tb_bairro_co_municipio TO ck_tb_bairro_codigo_municipio_ibge;
+
+-- 4) FK para tb_municipio, recriada explicitamente
+ALTER TABLE db_msterritorializacao.tb_bairro
+  DROP CONSTRAINT fk_tb_bairro_tb_municipio;
+
+ALTER TABLE db_msterritorializacao.tb_bairro
+  ADD CONSTRAINT fk_tb_bairro_tb_municipio
+  FOREIGN KEY (codigo_municipio_ibge)
+  REFERENCES db_msterritorializacao.tb_municipio (codigo_municipio_ibge)
+  ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 ADICIONA PK ID UUIDv7
