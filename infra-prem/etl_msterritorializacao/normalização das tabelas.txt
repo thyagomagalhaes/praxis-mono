@@ -47,6 +47,31 @@ CREATE INDEX ix_tb_estado_co_pais_m49 ON db_msterritorializacao.tb_estado USING 
 CREATE INDEX ix_tb_estado_co_regiao ON db_msterritorializacao.tb_estado USING btree (co_regiao);
 CREATE INDEX ix_tb_estado_geom ON db_msterritorializacao.tb_estado USING gist (geom);
 
+CREATE TABLE db_msterritorializacao.tb_municipio (
+    co_municipio             integer      PRIMARY KEY,
+    no_municipio             text         NOT NULL,
+    co_uf                    smallint     NOT NULL,
+    co_microrregiao          integer,
+    no_microrregiao          text,
+    co_mesorregiao           integer,
+    no_mesorregiao           text,
+    co_regiao_imediata       integer,
+    no_regiao_imediata       text,
+    co_regiao_intermediaria  integer,
+    no_regiao_intermediaria  text,
+    geom                     geometry(MultiPolygon, 4326),
+    no_fonte_geom            text,
+    dt_carga                 timestamptz  NOT NULL DEFAULT now(),
+
+    CONSTRAINT ck_tb_municipio_co_uf CHECK (co_municipio / 100000 = co_uf),
+    CONSTRAINT fk_tb_municipio_tb_estado FOREIGN KEY (co_uf)
+        REFERENCES db_msterritorializacao.tb_estado (co_uf)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE INDEX ix_tb_municipio_co_uf ON db_msterritorializacao.tb_municipio (co_uf);
+CREATE INDEX ix_tb_municipio_geom  ON db_msterritorializacao.tb_municipio USING gist (geom);
+
 2 - ALTERA  tb_pais: 
 
 -- Renomeia as colunas
@@ -94,24 +119,42 @@ ALTER TABLE db_msterritorializacao.tb_estado RENAME CONSTRAINT uq_tb_estado_sg_u
 
 COMMIT;
 
+4 - Altera a tb_municipio
 
-2 - Me informe os códigos em sql que altera os nome dos seguintes campos e atualiza os indices na tabela tb_estado:
+2 - Me informe os códigos em sql que altera os nome dos seguintes campos, atualiza as chaves estrangeiras e atualiza os índices na tabela tb_municipio:
 
+co_municipio para codigo_municipio_ibge
+no_municipio para nome_municipio_ibge
 co_uf para codigo_estado_ibge
-sg_uf para sigla_estado
-no_estado para nome_estado
-co_pais_m49 para codigo_pais_onu
-co_regiao para codigo_regiao_ibge
-sg_regiao para sigla_regiao_alfa2
-no_regiao para nome_regiao_alfa2
-geom para geometria_estado
-no_fonte_geom para origem_geometria_estado
-dt_carga para data_carga_pipeline_etl_estado
+co_microrregiao para codigo_microrregiao_ibge
+no_microrregiao para nome_microrregiao_ibge
+co_mesorregiao para codigo_mesorregiao_ibge
+no_mesorregiao para nome_mesorregiao_ibge
+co_regiao_imediata para codigo_regiao_imediata_ibge
+no_regiao_imediata para nome_regiao_imediata_ibge
+co_regiao_intermediaria para codigo_regiao_intermediaria_ibge
+no_regiao_intermediaria para nome_regiao_intermediaria_ibge
+geom para geometria_municipio
+no_fonte_geom para origem_geometria_municipio
+dt_carga para data_carga_pipeline_etl_municipio
 
 
 Atualize também a FK em tb_municipio que referencia tb_estado
 
-3 - 
+
+ADICIONA PK ID UUIDv7
+
+-- 1. ADICIONAR COLUNAS UUIDv7 PARA CHAVES PRIMÁRIAS E GERAR UUIDv7 - As Chaves primárias serão
+id em tb_pais;
+id em tb_estado;
+id em tb_municipio;
+id em tb_bairro;
+
+-- 2. ADICIONAR COLUNAS UUIDv7 PARA CHAVES ESTRANGEIRAS, DEFINIR DEFAULT UUIDv7 PARA OS NOVOS REGISTROS, REPLICAR RELACIONAMENTOS ( RESPEITANDO A HIERARQUIA ) E REMOVER RESTRIÇÕES DE INTEGRIDADE ANTIGAS. AS CHAVES ESTRANGEIRAS SERÃO:
+id_pais (  fk em tb_estado que referencia id do pais em tb_pais )
+id_estado (  fk em tb_municipio que referencia id do estado em tb_estado )
+id_municipio (  fk em tb_bairro que referencia id do municipio em tb_municipio )
+
 
 
 
