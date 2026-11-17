@@ -74,12 +74,12 @@ BEGIN;
 
 -- 1) Colunas de tb_estado
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN co_uf TO codigo_estado_ibge;
-ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN sg_uf TO sigla_estado_alfa2;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN sg_uf TO sigla_estado;
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_estado TO nome_estado;
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN co_pais_m49 TO codigo_pais_onu;
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN co_regiao TO codigo_regiao_ibge;
-ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN sg_regiao TO sigla_regiao_alfa2;
-ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_regiao TO nome_regiao_alfa2;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN sg_regiao TO sigla_regiao;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_regiao TO nome_regiao;
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN geom TO geometria_estado;
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_fonte_geom TO origem_geometria_estado;
 ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN dt_carga TO data_carga_pipeline_etl_estado;
@@ -90,7 +90,7 @@ ALTER INDEX db_msterritorializacao.ix_tb_estado_co_regiao RENAME TO ix_tb_estado
 ALTER INDEX db_msterritorializacao.ix_tb_estado_geom RENAME TO ix_tb_estado_geometria_estado;
 
 -- 3) Constraint UNIQUE da sigla (renomeia também o índice que a sustenta)
-ALTER TABLE db_msterritorializacao.tb_estado RENAME CONSTRAINT uq_tb_estado_sg_uf TO uq_tb_estado_sigla_estado_alfa2;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME CONSTRAINT uq_tb_estado_sg_uf TO uq_tb_estado_sigla_estado;
 
 COMMIT;
 
@@ -98,7 +98,7 @@ COMMIT;
 2 - Me informe os códigos em sql que altera os nome dos seguintes campos e atualiza os indices na tabela tb_estado:
 
 co_uf para codigo_estado_ibge
-sg_uf para sigla_estado_alfa2
+sg_uf para sigla_estado
 no_estado para nome_estado
 co_pais_m49 para codigo_pais_onu
 co_regiao para codigo_regiao_ibge
