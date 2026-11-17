@@ -20,6 +20,33 @@ CREATE INDEX        ix_tb_pais_geom ON db_msterritorializacao.tb_pais USING gist
 CREATE UNIQUE INDEX ux_tb_pais_iso2 ON db_msterritorializacao.tb_pais (co_iso_alpha2)
                                        WHERE co_iso_alpha2 IS NOT NULL;
 
+
+CREATE TABLE db_msterritorializacao.tb_estado (
+	co_uf int2 NOT NULL,
+	sg_uf bpchar(2) NOT NULL,
+	no_estado text NOT NULL,
+	co_pais_m49 int2 DEFAULT 76 NOT NULL,
+	co_regiao int2 NOT NULL,
+	sg_regiao varchar(2) NULL,
+	no_regiao text NOT NULL,
+	geom public.geometry(multipolygon, 4326) NULL,
+	no_fonte_geom text NULL,
+	dt_carga timestamptz DEFAULT now() NOT NULL,
+	CONSTRAINT tb_estado_co_pais_m49_not_null NOT NULL co_pais_m49,
+	CONSTRAINT tb_estado_co_regiao_not_null NOT NULL co_regiao,
+	CONSTRAINT tb_estado_co_uf_not_null NOT NULL co_uf,
+	CONSTRAINT tb_estado_dt_carga_not_null NOT NULL dt_carga,
+	CONSTRAINT tb_estado_no_estado_not_null NOT NULL no_estado,
+	CONSTRAINT tb_estado_no_regiao_not_null NOT NULL no_regiao,
+	CONSTRAINT tb_estado_pkey PRIMARY KEY (co_uf),
+	CONSTRAINT tb_estado_sg_uf_not_null NOT NULL sg_uf,
+	CONSTRAINT uq_tb_estado_sg_uf UNIQUE (sg_uf),
+	CONSTRAINT fk_tb_estado_tb_pais FOREIGN KEY (co_pais_m49) REFERENCES db_msterritorializacao.tb_pais(codigo_pais_onu) ON DELETE RESTRICT ON UPDATE CASCADE
+);
+CREATE INDEX ix_tb_estado_co_pais_m49 ON db_msterritorializacao.tb_estado USING btree (co_pais_m49);
+CREATE INDEX ix_tb_estado_co_regiao ON db_msterritorializacao.tb_estado USING btree (co_regiao);
+CREATE INDEX ix_tb_estado_geom ON db_msterritorializacao.tb_estado USING gist (geom);
+
 2 - ALTERA  tb_pais: 
 
 -- Renomeia as colunas
@@ -41,24 +68,50 @@ ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN dt_carga TO data_carga_
 ALTER INDEX db_msterritorializacao.ix_tb_pais_geom RENAME TO ix_tb_pais_geometria_pais;
 ALTER INDEX db_msterritorializacao.ux_tb_pais_iso2 RENAME TO ux_tb_pais_sigla_pais_alfa2;
 
+3 - ALTERA tb_estado:
 
-2 - Me informe os códigos em sql que altera os nome dos seguintes campos na tabela tb_pais:
+BEGIN;
 
-co_m49 para codigo_pais_onu
-co_iso_alpha2 para sigla_pais_alfa2 
-co_iso_alpha3 para sigla_pais_alfa3
-no_pais para nome_pais_pt
-co_regiao_m49 para codigo_regiao_onu
-no região para nome_regiao_onu
-co_subregiao_m49 para codigo_subregiao_onu
-no_subregiao para nome_subregiao_onu
-co_regiao_intermediaria_m49 para codigo_regiao_intemerdiaria_onu 
-no_regiao_intermediaria para nome_regiao_intermediaria_onu
-geom para geometria_pais
-no_fonte_geom para origem_geometria_pais
-dt_carga para data_carga_pipeline_etl_pais 
+-- 1) Colunas de tb_estado
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN co_uf TO codigo_estado_ibge;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN sg_uf TO sigla_estado_alfa2;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_estado TO nome_estado;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN co_pais_m49 TO codigo_pais_onu;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN co_regiao TO codigo_regiao_ibge;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN sg_regiao TO sigla_regiao_alfa2;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_regiao TO nome_regiao_alfa2;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN geom TO geometria_estado;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN no_fonte_geom TO origem_geometria_estado;
+ALTER TABLE db_msterritorializacao.tb_estado RENAME COLUMN dt_carga TO data_carga_pipeline_etl_estado;
 
-e que atualize a FK em tb_estado que referencia tb_pais
+-- 2) Índices
+ALTER INDEX db_msterritorializacao.ix_tb_estado_co_pais_m49 RENAME TO ix_tb_estado_codigo_pais_onu;
+ALTER INDEX db_msterritorializacao.ix_tb_estado_co_regiao RENAME TO ix_tb_estado_codigo_regiao_ibge;
+ALTER INDEX db_msterritorializacao.ix_tb_estado_geom RENAME TO ix_tb_estado_geometria_estado;
+
+-- 3) Constraint UNIQUE da sigla (renomeia também o índice que a sustenta)
+ALTER TABLE db_msterritorializacao.tb_estado RENAME CONSTRAINT uq_tb_estado_sg_uf TO uq_tb_estado_sigla_estado_alfa2;
+
+COMMIT;
+
+
+2 - Me informe os códigos em sql que altera os nome dos seguintes campos e atualiza os indices na tabela tb_estado:
+
+co_uf para codigo_estado_ibge
+sg_uf para sigla_estado_alfa2
+no_estado para nome_estado
+co_pais_m49 para codigo_pais_onu
+co_regiao para codigo_regiao_ibge
+sg_regiao para sigla_regiao_alfa2
+no_regiao para nome_regiao_alfa2
+geom para geometria_estado
+no_fonte_geom para origem_geometria_estado
+dt_carga para data_carga_pipeline_etl_estado
+
+
+Atualize também a FK em tb_municipio que referencia tb_estado
+
+3 - 
 
 
 
