@@ -1,0 +1,66 @@
+- UMA VEZ CONCLUÍDO O ETL, AS TABELAS FICAM:
+
+CREATE TABLE db_msterritorializacao.tb_pais (
+    co_m49                       smallint     PRIMARY KEY,
+    co_iso_alpha2                char(2),
+    co_iso_alpha3                char(3),
+    no_pais                      text         NOT NULL,
+    co_regiao_m49                smallint,
+    no_regiao                    text,
+    co_subregiao_m49             smallint,
+    no_subregiao                 text,
+    co_regiao_intermediaria_m49  smallint,
+    no_regiao_intermediaria      text,
+    geom                         geometry(MultiPolygon, 4326),
+    no_fonte_geom                text,
+    dt_carga                     timestamptz  NOT NULL DEFAULT now()
+);
+
+CREATE INDEX        ix_tb_pais_geom ON db_msterritorializacao.tb_pais USING gist (geom);
+CREATE UNIQUE INDEX ux_tb_pais_iso2 ON db_msterritorializacao.tb_pais (co_iso_alpha2)
+                                       WHERE co_iso_alpha2 IS NOT NULL;
+
+2 - ALTERA  tb_pais: 
+
+-- Renomeia as colunas
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN co_m49 TO codigo_pais_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN co_iso_alpha2 TO sigla_pais_alfa2;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN co_iso_alpha3 TO sigla_pais_alfa3;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN no_pais TO nome_pais_pt;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN co_regiao_m49 TO codigo_regiao_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN no_regiao TO nome_regiao_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN co_subregiao_m49 TO codigo_subregiao_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN no_subregiao TO nome_subregiao_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN co_regiao_intermediaria_m49 TO codigo_regiao_intermediaria_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN no_regiao_intermediaria TO nome_regiao_intermediaria_onu;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN geom TO geometria_pais;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN no_fonte_geom TO origem_geometria_pais;
+ALTER TABLE db_msterritorializacao.tb_pais RENAME COLUMN dt_carga TO data_carga_pipeline_etl_pais;
+
+-- Índices, para os nomes continuarem coerentes com as colunas
+ALTER INDEX db_msterritorializacao.ix_tb_pais_geom RENAME TO ix_tb_pais_geometria_pais;
+ALTER INDEX db_msterritorializacao.ux_tb_pais_iso2 RENAME TO ux_tb_pais_sigla_pais_alfa2;
+
+
+2 - Me informe os códigos em sql que altera os nome dos seguintes campos na tabela tb_pais:
+
+co_m49 para codigo_pais_onu
+co_iso_alpha2 para sigla_pais_alfa2 
+co_iso_alpha3 para sigla_pais_alfa3
+no_pais para nome_pais_pt
+co_regiao_m49 para codigo_regiao_onu
+no região para nome_regiao_onu
+co_subregiao_m49 para codigo_subregiao_onu
+no_subregiao para nome_subregiao_onu
+co_regiao_intermediaria_m49 para codigo_regiao_intemerdiaria_onu 
+no_regiao_intermediaria para nome_regiao_intermediaria_onu
+geom para geometria_pais
+no_fonte_geom para origem_geometria_pais
+dt_carga para data_carga_pipeline_etl_pais 
+
+e que atualize a FK em tb_estado que referencia tb_pais
+
+
+
+
+

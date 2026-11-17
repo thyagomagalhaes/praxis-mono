@@ -1,0 +1,55 @@
+# Uso (sem parar o compose principal):
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#       --profile etl run --rm --no-deps --build etl-pais      # 1) países (pai)
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#       --profile etl run --rm --no-deps etl-estado            # 2) estados (filho de tb_pais)
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#       --profile etl run --rm --no-deps etl-municipio         # 3) municípios (filho de tb_estado)
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#       --profile etl run --rm --no-deps --build etl-bairro    # 4) bairros (filho de tb_municipio; --build: novo requirements)
+x-etl-base: &etl-base
+  build: ./etl_msterritorializacao
+  image: etl-msterritorializacao:latest
+  profiles: ["etl"]
+  restart: "no"
+  depends_on:
+    postgis-rds-msterritorializacao:
+      condition: service_healthy
+  environment:
+    TZ: ${TZ:-America/Recife}
+    POSTGRES_HOST: postgis-rds-msterritorializacao
+    POSTGRES_PORT: 5432
+    POSTGRES_USER: ${POSTGRES_USER:-postgres}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    POSTGRES_DB: ${POSTGRES_MSTERRITORIALIZACAO_DB:-db_msterritorializacao}
+    DB_SCHEMA: db_msterritorializacao
+    IBGE_MALHA_QUALIDADE: intermediaria   # minima | intermediaria | maxima
+    LOG_LEVEL: INFO
+  networks:
+    - suasflux-prem-fsw
+  deploy:
+    resources:
+      limits:
+        cpus: '0.25'
+        memory: 768M
+
+services:
+  etl-pais:
+    <<: *etl-base
+    container_name: etl-pais-msterritorializacao
+    command: ["etl_pais.py"]
+
+  etl-estado:
+    <<: *etl-base
+    container_name: etl-estado-msterritorializacao
+    command: ["etl_estado.py"]
+
+  etl-municipio:
+    <<: *etl-base
+    container_name: etl-municipio-msterritorializacao
+    command: ["etl_municipio.py"]
+
+  etl-bairro:
+    <<: *etl-base
+    container_name: etl-bairro-msterritorializacao
+    command: ["etl_bairro.py"]
