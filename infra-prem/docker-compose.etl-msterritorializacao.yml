@@ -1,11 +1,11 @@
 # Uso (sem parar o compose principal):
-#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl-msterritorializacao.yml \
 #       --profile etl run --rm --no-deps --build etl-pais      # 1) países (pai)
-#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl-msterritorializacao.yml \
 #       --profile etl run --rm --no-deps etl-estado            # 2) estados (filho de tb_pais)
-#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl-msterritorializacao.yml \
 #       --profile etl run --rm --no-deps etl-municipio         # 3) municípios (filho de tb_estado)
-#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl.yml \
+#   docker compose --env-file .env.fsw -f docker-compose.fsw.yml -f docker-compose.etl-msterritorializacao.yml \
 #       --profile etl run --rm --no-deps --build etl-bairro    # 4) bairros (filho de tb_municipio; --build: novo requirements)
 x-etl-base: &etl-base
   build: ./etl_msterritorializacao
@@ -23,15 +23,15 @@ x-etl-base: &etl-base
     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     POSTGRES_DB: ${POSTGRES_MSTERRITORIALIZACAO_DB:-db_msterritorializacao}
     DB_SCHEMA: db_msterritorializacao
-    IBGE_MALHA_QUALIDADE: intermediaria   # minima | intermediaria | maxima
+    IBGE_MALHA_QUALIDADE: maxima   # minima | intermediaria | maxima
     LOG_LEVEL: INFO
   networks:
     - suasflux-prem-fsw
   deploy:
     resources:
       limits:
-        cpus: '0.25'
-        memory: 768M
+        cpus: '1.0'      # ETL sob demanda; com 0.25 o parse dos JSONs da qualidade máxima fica muito lento
+        memory: 2048M    # qualidade 'maxima': picos estimados de 0,5 a 1,2 GB (ver orientações)
 
 services:
   etl-pais:
